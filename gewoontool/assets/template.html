@@ -1,0 +1,25 @@
+<h4 class="topofpage">Informatie over {{ ifc }}:</h4>
+{% if tables %}
+    <p class="informatie">Fouten in de data van {{ ifc }}:</p>
+{% for table in tables %}
+    <div class="df">
+        {{ table.to_html(index=False) | safe}}
+    </div>
+{% endfor %}
+{% endif %}
+
+{% if images %}
+<p class="informatie">Afbeeldingen met de dubbele elementen:</p>
+<div class="galdiv">
+{% for image in images %}
+<div class="gallery">
+    <a target="_blank" href="data:image/png;base64,{{ image[2] }}">
+        <img src="data:image/png;base64,{{ image[2] }}">
+    </a>
+    <div class="desc">{{image[1]}}</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+<div class="ending">
+</div>

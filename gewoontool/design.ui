@@ -1,0 +1,1226 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CSVgenerator</class>
+ <widget class="QMainWindow" name="CSVgenerator">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1200</width>
+    <height>800</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+    <horstretch>1</horstretch>
+    <verstretch>5</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="font">
+   <font>
+    <family>Open Sans SemiBold</family>
+    <pointsize>10</pointsize>
+    <weight>75</weight>
+    <bold>true</bold>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>geWOONhout</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="centralGrid">
+    <item row="0" column="0">
+     <widget class="QTabWidget" name="tabs">
+      <property name="font">
+       <font>
+        <family>Open Sans SemiBold</family>
+        <pointsize>10</pointsize>
+        <weight>75</weight>
+        <italic>false</italic>
+        <bold>true</bold>
+        <underline>false</underline>
+       </font>
+      </property>
+      <property name="focusPolicy">
+       <enum>Qt::NoFocus</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="CSV">
+       <attribute name="title">
+        <string>CSV Generator</string>
+       </attribute>
+       <layout class="QGridLayout" name="csvGrid">
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QGroupBox" name="ifc_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>5</horstretch>
+            <verstretch>5</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Open Sans SemiBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+            <underline>false</underline>
+            <strikeout>false</strikeout>
+            <stylestrategy>PreferAntialias</stylestrategy>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>IFC -&gt; CSV</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" name="ifcGrid">
+           <property name="leftMargin">
+            <number>20</number>
+           </property>
+           <property name="topMargin">
+            <number>20</number>
+           </property>
+           <property name="rightMargin">
+            <number>20</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <item row="5" column="0">
+            <widget class="QLabel" name="bb_label">
+             <property name="text">
+              <string>BB ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>bb_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="vmg_label">
+             <property name="text">
+              <string>VMG ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>vmg_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" colspan="2">
+            <widget class="QLineEdit" name="bb_order"/>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="nesting_label">
+             <property name="text">
+              <string>CSV nesting prioriteit</string>
+             </property>
+             <property name="buddy">
+              <cstring>nesting_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" colspan="2">
+            <widget class="QLineEdit" name="vh_order"/>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ifc_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="csv_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>CSV Map</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" colspan="2">
+            <widget class="QLineEdit" name="vmg_order"/>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="csv_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="2">
+            <widget class="QPushButton" name="prio_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Prio CSV</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="ifc_label">
+             <property name="text">
+              <string>Waar staan de IFCs?</string>
+             </property>
+             <property name="buddy">
+              <cstring>ifc_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="vh_label">
+             <property name="text">
+              <string>VH ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>vh_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="ifc_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>IFC Map</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLineEdit" name="nesting_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>3</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="csv_label">
+             <property name="text">
+              <string>Waar moeten de CSVs naartoe?</string>
+             </property>
+             <property name="buddy">
+              <cstring>csv_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="bb_label_2">
+             <property name="text">
+              <string>CSV producten voor Boerboom</string>
+             </property>
+             <property name="buddy">
+              <cstring>nesting_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="bb_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>3</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="bb_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>BB CSV</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QGroupBox" name="status_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Open Sans SemiBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+            <underline>false</underline>
+            <strikeout>false</strikeout>
+            <stylestrategy>PreferAntialias</stylestrategy>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="title">
+           <string>Status</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QHBoxLayout" name="statusGrid">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <property name="leftMargin">
+            <number>20</number>
+           </property>
+           <property name="topMargin">
+            <number>20</number>
+           </property>
+           <property name="rightMargin">
+            <number>20</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <item>
+            <widget class="QTextEdit" name="status_csv">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>5</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLCDNumber" name="lcd">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>2</horstretch>
+               <verstretch>2</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="frameShape">
+              <enum>QFrame::StyledPanel</enum>
+             </property>
+             <property name="digitCount">
+              <number>2</number>
+             </property>
+             <property name="segmentStyle">
+              <enum>QLCDNumber::Flat</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QProgressBar" name="progressCSV">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>false</bool>
+          </property>
+          <property name="invertedAppearance">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QGroupBox" name="generate_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Open Sans SemiBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+            <underline>false</underline>
+            <strikeout>false</strikeout>
+            <stylestrategy>PreferAntialias</stylestrategy>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="title">
+           <string>Genereren</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="generateGrid">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <property name="leftMargin">
+            <number>30</number>
+           </property>
+           <property name="topMargin">
+            <number>30</number>
+           </property>
+           <property name="rightMargin">
+            <number>30</number>
+           </property>
+           <property name="bottomMargin">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="start_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exit_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Exit</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1" rowspan="2">
+         <widget class="QGroupBox" name="option_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Open Sans SemiBold</family>
+            <pointsize>10</pointsize>
+            <weight>75</weight>
+            <italic>false</italic>
+            <bold>true</bold>
+            <underline>false</underline>
+            <strikeout>false</strikeout>
+            <stylestrategy>PreferAntialias</stylestrategy>
+            <kerning>true</kerning>
+           </font>
+          </property>
+          <property name="title">
+           <string>Opties</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="optionGrid">
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <property name="leftMargin">
+            <number>30</number>
+           </property>
+           <property name="topMargin">
+            <number>30</number>
+           </property>
+           <property name="rightMargin">
+            <number>30</number>
+           </property>
+           <property name="bottomMargin">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="csvs_box">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="title">
+              <string>Welke CSVs:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_3">
+              <item>
+               <widget class="QCheckBox" name="erp_check">
+                <property name="text">
+                 <string>ERP</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+                <property name="tristate">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="vh_check">
+                <property name="text">
+                 <string>Van Hulst</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="bb_check">
+                <property name="text">
+                 <string>Boerboom</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="vmg_check">
+                <property name="text">
+                 <string>VMG</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="erp_box">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="title">
+              <string>ERP CSV per:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <item>
+               <widget class="QRadioButton" name="radio_bn">
+                <property name="font">
+                 <font>
+                  <family>Open Sans Condensed</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <underline>false</underline>
+                  <strikeout>false</strikeout>
+                  <stylestrategy>PreferAntialias</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Bouwnummer</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radio_mod">
+                <property name="font">
+                 <font>
+                  <family>Open Sans Condensed</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <underline>false</underline>
+                  <strikeout>false</strikeout>
+                  <stylestrategy>PreferAntialias</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Module</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="prio_box">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="title">
+              <string>Prioriteit:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QRadioButton" name="radio_def">
+                <property name="font">
+                 <font>
+                  <family>Open Sans Condensed</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <underline>false</underline>
+                  <strikeout>false</strikeout>
+                  <stylestrategy>PreferAntialias</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Normaal</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="radio_ext">
+                <property name="font">
+                 <font>
+                  <family>Open Sans Condensed</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <underline>false</underline>
+                  <strikeout>false</strikeout>
+                  <stylestrategy>PreferAntialias</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Uitgebreid</string>
+                </property>
+                <property name="checked">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="Quality">
+       <attribute name="title">
+        <string>Kwaliteitscheck</string>
+       </attribute>
+       <layout class="QGridLayout" name="qualityGrid">
+        <property name="leftMargin">
+         <number>10</number>
+        </property>
+        <property name="topMargin">
+         <number>10</number>
+        </property>
+        <property name="rightMargin">
+         <number>10</number>
+        </property>
+        <property name="bottomMargin">
+         <number>10</number>
+        </property>
+        <property name="spacing">
+         <number>10</number>
+        </property>
+        <item row="3" column="0">
+         <widget class="QGroupBox" name="status_box2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>2</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Status</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <layout class="QHBoxLayout" name="statusGrid2">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <property name="leftMargin">
+            <number>20</number>
+           </property>
+           <property name="topMargin">
+            <number>20</number>
+           </property>
+           <property name="rightMargin">
+            <number>20</number>
+           </property>
+           <property name="bottomMargin">
+            <number>20</number>
+           </property>
+           <item>
+            <widget class="QTextEdit" name="status_qual">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QGroupBox" name="generate_box2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Genereren</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="generateGrid2">
+           <property name="spacing">
+            <number>30</number>
+           </property>
+           <property name="leftMargin">
+            <number>30</number>
+           </property>
+           <property name="topMargin">
+            <number>30</number>
+           </property>
+           <property name="rightMargin">
+            <number>30</number>
+           </property>
+           <property name="bottomMargin">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="start_button2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Start</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="exit_button2">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Exit</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QProgressBar" name="progressIFC">
+          <property name="value">
+           <number>0</number>
+          </property>
+          <property name="textVisible">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" rowspan="2">
+         <widget class="QGroupBox" name="qual_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>Kwaliteitscheck instellingen</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+          <property name="checkable">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="qualityBoxGrid2">
+           <property name="spacing">
+            <number>20</number>
+           </property>
+           <property name="leftMargin">
+            <number>30</number>
+           </property>
+           <property name="topMargin">
+            <number>30</number>
+           </property>
+           <property name="rightMargin">
+            <number>30</number>
+           </property>
+           <property name="bottomMargin">
+            <number>30</number>
+           </property>
+           <item>
+            <widget class="QGroupBox" name="ifc_group">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="title">
+              <string>Waar staan de IFC bestanden?</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="ifcBoxGrid">
+              <item>
+               <widget class="QLineEdit" name="ifc_path2">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="ifc_button2">
+                <property name="text">
+                 <string>IFC Map</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="report_group">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>12</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="title">
+              <string>Waar moet het rapport naartoe?</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="reportGrid">
+              <item>
+               <widget class="QLineEdit" name="report_path">
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="report_button">
+                <property name="font">
+                 <font>
+                  <family>Open Sans Condensed</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <italic>false</italic>
+                  <bold>true</bold>
+                  <underline>false</underline>
+                  <strikeout>false</strikeout>
+                  <stylestrategy>PreferAntialias</stylestrategy>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Rapport locatie</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="screw_check">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Controleren op schroeven?</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="air_check">
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Controleren op luchtdichting?</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QGroupBox" name="preview_box">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>5</horstretch>
+            <verstretch>5</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="layoutDirection">
+           <enum>Qt::LeftToRight</enum>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <property name="title">
+           <string>Preview</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <layout class="QHBoxLayout" name="preview_layout"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>ifc_path</tabstop>
+  <tabstop>csv_path</tabstop>
+  <tabstop>nesting_path</tabstop>
+  <tabstop>vh_order</tabstop>
+  <tabstop>bb_order</tabstop>
+  <tabstop>vmg_order</tabstop>
+  <tabstop>ifc_button</tabstop>
+  <tabstop>csv_button</tabstop>
+  <tabstop>prio_button</tabstop>
+  <tabstop>start_button</tabstop>
+  <tabstop>exit_button</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

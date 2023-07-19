@@ -1,0 +1,17 @@
+name: gewoontool
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pandas
+  - sphinx=5.0.2
+  - pyqt
+  - pythonocc-core
+  - pip
+  - pyinstaller
+  - pip:
+    - ifcopenshell
+    - Jinja2
+    - pdfkit
+    - sphinx_rtd_theme

@@ -26,7 +26,7 @@ Python version 3.10 onder het kopje Windows Installers.
 Vervolgens kan een nieuwe Anaconda Prompt (Anaconda3) geopend worden
 door in Windows te zoeken op Anaconda Prompt. Dit zou een nieuwe
 “Command Prompt” lijkende window moeten openen. Kopieër via de verkenner
-het pad naar de map waar ‘gewoontool’ staat (bv: \Users\DN51\Desktop\gewoontool),
+het pad naar de map waar 'gewoontool' staat (bv: \Users\DN51\Desktop\gewoontool),
 en gebruik de command:
 
 .. code:: sh
@@ -57,6 +57,7 @@ Vervolgens kan de app gestart worden met twee commands:
    python app.py
 
 Om de .exe te maken wordt gebruik gemaakt van een .spec file. Hierin staan alle benodigdheden en specificaties om de tool te maken. De .exe kan genereert worden met de command:
+
 .. code:: sh
 
     pyinstaller geWOONtool.spec

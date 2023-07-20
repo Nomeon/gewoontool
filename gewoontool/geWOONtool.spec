@@ -1,6 +1,5 @@
 # -*- mode: python -*-
 
-
 block_cipher = None
 
 # code ...
@@ -18,7 +17,7 @@ a = Analysis(
     ['C:/Users/DN51/OneDrive - TBI Holding/Bureaublad/python/test/gewoontool/app.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/Users/DN51/Anaconda3/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf', 'wkhtmltopdf/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/IFCquality/assets', 'assets/')],
+    datas=[('C:/Users/DN51/Anaconda3/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf', 'wkhtmltopdf/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets', 'assets/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -51,5 +50,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-	icon=['I:\\GHO\\00 Algemeen\\ICT\\Applicaties\\IFC Tools\\Dev\\IFCquality\\assets\\gewoonhout.ico'],
+	icon=['I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets/gewoonhout.ico'],
 )

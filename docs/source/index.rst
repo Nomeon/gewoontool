@@ -50,15 +50,15 @@ LET OP! De headers ("Productcode" en "Condition", "Value") moeten exact zo gesch
     *   - etc.
         -
 
-Verder spreekt de tool voor het CSV process voor zich. De map met IFCs dient geselecteerd te worden, de map waar de CSVs 
+Verder spreekt de tool voor het CSV proces voor zich. De map met IFCs dient geselecteerd te worden, de map waar de CSVs 
 opgeslagen moeten worden dient geselecteerd te worden, de CSV die gegenereerd dienen te worden moeten 
 aangevinkt worden bij de checkboxen, en de knop "Start" dient ingedrukt te worden. De rest van de velden 
 zijn optioneel als er een test CSV gemaakt moet worden, maar wel handig om in te vullen als er een echte
 CSV gemaakt moet worden. De prioriteit staat standaard op "Normaal", wat gehanteerd wordt voor de echte
-CSV. "Uitgebreid" is om te testen voor Boerboom, aangezien de prioriteit dan per bouwnummer, moduletype 
-en werkstation wordt ingevuld. Dit zorgt voor een groot verschil in de prioriteiten.
+CSV. "Uitgebreid" geeft een prioriteit per bouwnummer, moduletype en werkstation. 
+Dit zorgt voor een groot verschil in de prioriteiten, maar kan nuttig zijn om mee testen.
 
-Voor het IFC process, dient een map met IFCs geselecteerd te worden, en een locatie voor het rapport. Vervolgens dient 
+Voor het IFC proces, dient een map met IFCs geselecteerd te worden, en een locatie voor het rapport. Vervolgens dient 
 er alleen op "Start" gedrukt te worden, en de tool doet de rest. Het kan zijn dat de tool soms even vastloopt, maar
 dat is normaal, gezien het feit dat de IFCs inladen nogal wat tijd kost. Achteraf kan er via het menu IFCs (linksbovenin) 
 nog naar de IFCs die problemen hebben gekeken worden, mochten deze er zijn. Hierin staat een menu met IFCs met een submenu:

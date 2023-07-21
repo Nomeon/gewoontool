@@ -63,3 +63,14 @@ Om de .exe te maken wordt gebruik gemaakt van een .spec file. Hierin staan alle 
     pyinstaller geWOONtool.spec
 
 De .exe kan hierna gevonden worden in de dist folder.
+
+Documentatie:
+-------------
+
+De documentatie wordt deels automatisch gegenereerd op basis van de aanwijzingen die in de code staan. Dit wordt gedaan met `Sphinx <https://www.sphinx-doc.org/en/master/>`__.
+De rest van de documentatie bestanden staan in de 'docs' folder. in de \*.rst bestanden staat de tekst die in de documentatie komt. 
+De documentatie kan gegenereerd worden met de command (zorg dat je al in de docs folder zit):
+
+.. code:: sh
+
+    sphinx-build -b html docs docs/build

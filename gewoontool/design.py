@@ -768,7 +768,7 @@ class Ui_CSVgenerator(object):
         self.screw_check.setText(_translate("CSVgenerator", "Controleren op schroeven?"))
         self.air_check.setText(_translate("CSVgenerator", "Controleren op luchtdichting?"))
         self.preview_box.setTitle(_translate("CSVgenerator", "Preview"))
-        self.tabs.setTabText(self.tabs.indexOf(self.Quality), _translate("CSVgenerator", "Kwaliteitscheck"))
+        self.tabs.setTabText(self.tabs.indexOf(self.Quality), _translate("CSVgenerator", "Verdubbelaar"))
 
 
 if __name__ == "__main__":

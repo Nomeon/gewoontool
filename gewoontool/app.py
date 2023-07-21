@@ -2,6 +2,7 @@ import os
 import re
 import sys
 import math
+import glob
 import logging
 
 app_module_path = 'app_module'
@@ -239,10 +240,12 @@ class IFCProcess(QThread):
                 df_errors = pd.concat(df_list, ignore_index=True)
                 df_errors = df_errors.drop(['Gewicht', 'Modulenaam'], axis=1)
 
-                df_duplicate, shapesA, shapesB = self.comparisons(ifc_df, schroef=self.schroef, luchtdichting=self.dichting)
+                df_duplicate, shapesA = self.comparisons(ifc_df, schroef=self.schroef, luchtdichting=self.dichting)
                 df_dup = df_duplicate['Hoeveel dubbelen'].sum() if not df_duplicate.empty else 0
 
                 self.generate_images(ifc_df, ifc_name, shapesA) if len(shapesA) != 0 else None
+                # Refresh the list of images
+                glob.glob("TEMP/*.png")
                 helpers.create_html(df_errors, df_duplicate, self.ifc_list[prog - 1])
 
                 data.append([len(df_empty), len(df_format), len(df_unit), len(df_null), len(df_nonunique), len(df_category), df_dup])
@@ -456,9 +459,9 @@ class IFCProcess(QThread):
             luchtdichting (bool, optional): If airtight materials need to be checked. Defaults to False.
 
         Returns:
-            tuple[pd.DataFrame, list, list]: A dataframe with all the duplicate shapes, and two lists of shapes showing the parts with issues.
+            tuple[pd.DataFrame, list]: A dataframe with all the duplicate shapes, and two lists of shapes showing the parts with issues.
         """
-        shapesA, shapesB = [], []
+        shapesA = []
         df_dub = pd.DataFrame()
         categories = sorted(df['Categorie'].unique())
         try:
@@ -486,14 +489,13 @@ class IFCProcess(QThread):
                                     'Name B': [name1], 'Productcode B': [productcode1]})
                     df_dub = pd.concat([df_dub, s])
                     shapesA.append(a)
-                    shapesB.append(b)
         
         if df_dub.empty:
-            return df_dub, shapesA, shapesB
+            return df_dub, shapesA
         else:    
             df_dub = df_dub.groupby(df_dub.columns.tolist(), as_index=False).size()
             df_dub = df_dub.rename(columns={'size':'Hoeveel dubbelen'})
-            return df_dub, shapesA, shapesB
+            return df_dub, shapesA
         
 
     def get_boundingbox(self, shape) -> tuple:

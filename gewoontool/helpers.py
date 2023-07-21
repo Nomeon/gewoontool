@@ -54,7 +54,7 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
     settings = ifcopenshell.geom.settings()
     settings.set(settings.USE_PYTHON_OPENCASCADE, True)
     for element in ifc.by_type('IfcElement'):
-        if (not schroef or not lucht) and 'IfcFastener' in str(element):
+        if ('IfcFastener' in str(element) or 'IfcMechanicalFastener' in str(element)) and (not schroef or not lucht):
             continue
 
         if 'IfcElementAssembly' not in str(element):
@@ -65,23 +65,20 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
                     name = elements['Identity Data']['Type Mark']
                 else:
                     name = element.get_info()['Name']
-                    elementtype = element.get_info()['type']
-                row = {'Shape': shape, 'Name': name, 'Type': elementtype}
-                # for v in elements.values():
-                #     if ifc.schema == 'IFC2X3' and 'Klant' in v.keys():
-                #         row |= v
-                #     elif ifc.schema == 'IFC4':
-                #         row |= v
-                # rows.append(row)
-                #! IFC4 Sustainer TEST
-                row |= elements['S']
+                row = {'Shape': shape, 'Name': name}
+                if ifc.schema == 'IFC2X3':
+                    for v in elements.values():
+                        if 'Klant' in v.keys():
+                            row |= v
+                elif ifc.schema == 'IFC4':
+                    row |= elements['S']
                 rows.append(row)
             except KeyError:
                 print(f'KeyError: {element}')
                 continue
 
     df = pd.DataFrame(rows)
-    df = df[['Type', 'Klant', 'Projectnummer', 'Bouwnummer', 'Moduletype',
+    df = df[['Klant', 'Projectnummer', 'Bouwnummer', 'Moduletype',
             'Modulenaam', 'Productcode', 'Name', 'IFC bestand',
             'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht',
             'Materiaal', 'Station', 'Aantal', 'Eenheid',
@@ -161,8 +158,6 @@ def create_nesting(
     sorted_werkstations = sorted(combined_df["Station"].unique())
     sorted_werkstations.reverse()
     mods.reverse()
-    empty_list = range(1, (len(mods) + 1))
-
 
     try:
         sorted_werkstations.append(

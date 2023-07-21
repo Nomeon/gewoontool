@@ -839,7 +839,7 @@
       </widget>
       <widget class="QWidget" name="Quality">
        <attribute name="title">
-        <string>Kwaliteitscheck</string>
+        <string>Verdubbelaar</string>
        </attribute>
        <layout class="QGridLayout" name="qualityGrid">
         <property name="leftMargin">

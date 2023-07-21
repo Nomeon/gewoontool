@@ -14,7 +14,7 @@ casroot_paths = (casroot, 'casroot')
 folder_paths.append(casroot_paths)
 
 a = Analysis(
-    ['C:/Users/DN51/OneDrive - TBI Holding/Bureaublad/python/test/gewoontool/app.py'],
+    ['app.py'],
     pathex=[],
     binaries=[],
     datas=[('C:/Users/DN51/Anaconda3/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf', 'wkhtmltopdf/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets', 'assets/')],

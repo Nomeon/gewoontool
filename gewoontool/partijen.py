@@ -59,7 +59,7 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         }
     )
     df = df.sort_values(by=["OnderdeelNaam", "Modulenaam"])
-    df.to_csv(f"{path}/{project}-BB.csv", index=False, sep=",")
+    df.to_csv(f"{path}/{ordernummer}-{project}-BB.csv", index=False, sep=",")
 
 
 def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productcodes: list) -> None:
@@ -75,6 +75,8 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
     
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
     df = df[(~df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144")) & (~df["Productcode"].isin(productcodes))]
+    # Filter for VMG parts
+    df = df[~df["Materiaal"].str.contains("PRO")]
 
     if df.empty:
         return
@@ -176,7 +178,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         mask = (
             (df["Materiaal vH"] == "LVLS")
             & (df["Dikte vH"] == 45)
-            & (df["Station"] == "WS05")
+            & df["Station"].isin(["WS05", "WS114"])
         )
         df_rest = df[~mask]
         df_binnenwand = df[mask]
@@ -282,7 +284,7 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str) -> None:
         path (str): The path to save the CSV file.
     """
     project = df["Projectnummer"].iloc[0]
-    df = df[df["Materiaal"] == "PRO"]
+    df = df[df["Materiaal"].str.contains("PRO")]
 
     if df.empty:
         return
@@ -310,4 +312,4 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str) -> None:
     df["Aantal"] = (df["Aantal"] * df["size"]).astype(int)
     df = df.drop("size", axis=1)
 
-    df.to_csv(f"{path}/{project}-VMG.csv", index=False)
+    df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False)

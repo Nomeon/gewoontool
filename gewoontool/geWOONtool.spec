@@ -17,7 +17,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/Users/DN51/Anaconda3/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf', 'wkhtmltopdf/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets', 'assets/')],
+    datas=[('C:/Users/Stijn/.conda/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('C:/Users/Stijn/Desktop/python/gewoontool/gewoontool/assets', 'assets/')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -50,5 +50,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-	icon=['I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets/gewoonhout.ico'],
+	icon=['C:/Users/Stijn/Desktop/python/gewoontool/gewoontool/assets/gewoonhout.ico'],
 )

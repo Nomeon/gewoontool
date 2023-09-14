@@ -140,15 +140,24 @@ class CSVProcess(QThread):
             prio = helpers.create_nesting(combined_df=df, prioriteit=prioriteit, extended_prio=self.prio_standard)
 
             if self.bbChecked:
-                partijen.BB(df=df, ordernummer=self.orderBB, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
+                bborder = "IO-000000"
+                if self.orderBB != "":
+                    bborder = self.orderBB
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
 
             if self.vmgChecked:
-                partijen.VMG(df=df, ordernummer=self.orderVMG, path=self.csv_path)
+                vmgorder = "IO-000000"
+                if self.orderVMG != "":
+                    vmgorder = self.orderVMG
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
                 if self.vhChecked:
-                    partijen.VH(df=df_bn, ordernummer=self.orderVH, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
+                    vhorder = "IO-000000"
+                    if self.orderVH != "":
+                        vhorder = self.orderVH
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
                 if self.erpChecked:
                     partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
 

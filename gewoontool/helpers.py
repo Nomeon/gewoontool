@@ -79,13 +79,14 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
 
     df = pd.DataFrame(rows)
     df = df[['Klant', 'Projectnummer', 'Bouwnummer', 'Moduletype',
-            'Modulenaam', 'Productcode', 'Name', 'IFC bestand',
+            'Modulenaam', 'IFC bestand', 'Productcode', 'Name',
             'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht',
             'Materiaal', 'Station', 'Aantal', 'Eenheid',
             'Shape']]    
     df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]] = df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]].apply(pd.to_numeric)
     df = df.round({"Dikte": 1, "Lengte": 1, "Breedte": 1})
-    df = df[df["Station"] != "WS99"]
+    df = df[~df['Station'].isin(['WS99', 'WS199'])]
+
     return df
 
 def combine_dfs(df_list: list) -> pd.DataFrame:
@@ -105,7 +106,7 @@ def combine_dfs(df_list: list) -> pd.DataFrame:
         ["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]
     ].apply(pd.to_numeric)
     df = df.round({"Dikte": 1, "Lengte": 1, "Breedte": 1})
-    df = df[df["Station"] != "WS99"]
+    df = df[~df['Station'].isin(['WS99', 'WS199'])]
     df = df.drop(["Shape"], axis=1)
     return df
 

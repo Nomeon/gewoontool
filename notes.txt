@@ -1,0 +1,3 @@
+('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf', 'wkhtmltopdf/')
+icon=['I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets/gewoonhout.ico'],
+datas=[('C:/Users/DN51/Anaconda3/envs/gewoontool/Lib/site-packages/ifcopenshell', 'ifcopenshell/'), ('I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Dev/geWOONtool/gewoontool/assets', 'assets/')],

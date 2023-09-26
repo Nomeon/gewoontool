@@ -14,7 +14,7 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
     project = df["Projectnummer"].iloc[0]
 
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
-    df = df[df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144") | df["Productcode"].isin(productcodes)]
+    df = df[df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144") | df["Productcode"].isin(productcodes) | df["Materiaal"].str.contains("BAUB")]
 
     if df.empty:
         return
@@ -74,7 +74,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
     project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
     
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
-    df = df[(~df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144")) & (~df["Productcode"].isin(productcodes))]
+    df = df[(~df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144")) & (~df["Productcode"].isin(productcodes)) & (~df["Materiaal"].str.contains("BAUB"))]
     # Filter for VMG parts
     df = df[~df["Materiaal"].str.contains("PRO")]
 

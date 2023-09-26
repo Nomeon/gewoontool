@@ -209,6 +209,7 @@ class IFCProcess(QThread):
         try:
             self.ifcProgress.emit(0)
             os.mkdir('TEMP')
+            werknr = ''
 
             prog, length = 1, len(self.ifc_list)
             data = []
@@ -237,7 +238,9 @@ class IFCProcess(QThread):
                 df_basic = ifc_df[['Modulenaam', 'Productcode', 'Name', 
                    'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht', 
                    'Materiaal', 'Station', 'Aantal', 'Eenheid']]
-                
+                if werknr == '':
+                    werknr = ifc_df['Projectnummer'].iloc[0]
+                    
                 df_format = self.formatting(df_basic.copy()) if 'kozijn' not in ifc_name and 'gevel' not in ifc_name else pd.DataFrame()
                 df_empty = self.empty(df_basic.copy())
                 df_unit = self.units(df_basic.copy())
@@ -278,7 +281,7 @@ class IFCProcess(QThread):
             ifc_string = ', '.join(str(ifc) for ifc in self.ifc_list)
             helpers.create_empty_html(ifc_string, results)
             helpers.combine_html()
-            helpers.html_to_pdf(self.report_loc)
+            helpers.html_to_pdf(self.report_loc, werknr)
             self.messageSignal.emit("Het rapport is gegenereerd. Opschonen van de TEMP map...")
             for file in os.listdir("TEMP"):
                 os.remove(f"TEMP/{file}")

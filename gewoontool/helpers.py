@@ -4,6 +4,7 @@ import sys
 import glob
 import pdfkit
 import base64
+import datetime
 import pandas as pd
 import ifcopenshell
 from itertools import product
@@ -280,12 +281,14 @@ def create_empty_html(ifc_string: str, data: list) -> None:
         f.write(html)
 
 
-def html_to_pdf(path: str) -> None:
+def html_to_pdf(path: str, werknr: str) -> None:
     """Converts the HTML file to a PDF file.
 
     Args:
         path (str): The path to save the PDF file.
     """
+    current_date = datetime.datetime.now()
+    date = current_date.strftime("%d-%m-%Y")
     WKHTML_PATH = 'I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf/bin/wkhtmltopdf.exe'
     options = {
         'page-size' : 'A4',
@@ -299,7 +302,7 @@ def html_to_pdf(path: str) -> None:
     config = pdfkit.configuration(wkhtmltopdf=path_wkhtmltopdf)
     for filename in glob.glob('TEMP/combined.html'):
         with open(os.path.join(os.getcwd(), filename), 'r'):
-            output = f'{path}/report.pdf'
+            output = f'{path}/{werknr}-{date}-report.pdf'
             cssfile = resource_path('assets\\template.css')
             pdfkit.from_file(filename, output, options=options, configuration=config, css=cssfile)
 

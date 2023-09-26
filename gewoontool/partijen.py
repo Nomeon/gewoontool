@@ -173,32 +173,22 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         }
     )
 
-    binnenwand = True
-    if binnenwand:
-        mask = (
-            (df["Materiaal vH"] == "LVLS")
-            & (df["Dikte vH"] == 45)
-            & df["Station"].isin(["WS05", "WS114"])
-        )
-        df_rest = df[~mask]
-        df_binnenwand = df[mask]
-        df_binnenwand["InkooporderNr"] = df_binnenwand["InkooporderNr"] + "-BW"
-        df_binnenwand.to_csv(
-            f"{path}/{ordernummer}-{bouwnummer[-2:]}-BW-{project}-{bouwnummer}-VH.csv",
-            index=False,
-            sep=";",
-        )
-        df_rest.to_csv(
-            f"{path}/{ordernummer}-{bouwnummer[-2:]}-{project}-{bouwnummer}-VH.csv",
-            index=False,
-            sep=";",
-        )
-    else:
-        df.to_csv(
-            f"{path}/{ordernummer}-{bouwnummer[-2:]}-{project}-{bouwnummer}-VH.csv",
-            index=False,
-            sep=";",
-        )
+    mask = (
+        (df["Materiaal vH"] == "LVLS")
+        & (df["Dikte vH"] == 45)
+        & df["Station"].isin(["WS05", "WS114"])
+    )
+
+    df_rest = df[~mask]
+    df_binnenwand = df[mask]
+    df_binnenwand["InkooporderNr"] += "-BW"
+    
+    df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
+    df_vh.to_csv(
+        f"{path}/{ordernummer}-{bouwnummer[-2:]}-{project}-{bouwnummer}-VH.csv",
+        index=False,
+        sep=";",
+    )
 
 
 def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:

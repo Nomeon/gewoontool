@@ -73,6 +73,8 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
                             row |= v
                 elif ifc.schema == 'IFC4':
                     row |= elements['S']
+                if 'Klant' not in row.keys():
+                    continue
                 rows.append(row)
             except KeyError:
                 print(f'KeyError: {element}')
@@ -87,7 +89,6 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
     df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]] = df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]].apply(pd.to_numeric)
     df = df.round({"Dikte": 1, "Lengte": 1, "Breedte": 1})
     df = df[~df['Station'].isin(['WS99', 'WS199'])]
-
     return df
 
 def combine_dfs(df_list: list) -> pd.DataFrame:

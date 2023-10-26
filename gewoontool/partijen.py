@@ -302,4 +302,4 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str) -> None:
     df["Aantal"] = (df["Aantal"] * df["size"]).astype(int)
     df = df.drop("size", axis=1)
 
-    df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False)
+    df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False, sep=";")

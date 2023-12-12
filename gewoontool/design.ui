@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1200</width>
-    <height>800</height>
+    <width>1400</width>
+    <height>1000</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -95,7 +95,7 @@
            <bool>false</bool>
           </property>
           <property name="title">
-           <string>IFC -&gt; CSV</string>
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -122,7 +122,20 @@
            <property name="spacing">
             <number>20</number>
            </property>
-           <item row="5" column="0">
+           <item row="8" column="1" colspan="2">
+            <widget class="QLineEdit" name="vmg_order"/>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="csv_label">
+             <property name="text">
+              <string>Waar moeten de CSVs naartoe?</string>
+             </property>
+             <property name="buddy">
+              <cstring>csv_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="0">
             <widget class="QLabel" name="bb_label">
              <property name="text">
               <string>BB ordernummer</string>
@@ -132,88 +145,7 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="vmg_label">
-             <property name="text">
-              <string>VMG ordernummer</string>
-             </property>
-             <property name="buddy">
-              <cstring>vmg_order</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1" colspan="2">
-            <widget class="QLineEdit" name="bb_order"/>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="nesting_label">
-             <property name="text">
-              <string>CSV nesting prioriteit</string>
-             </property>
-             <property name="buddy">
-              <cstring>nesting_path</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="1" colspan="2">
-            <widget class="QLineEdit" name="vh_order"/>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ifc_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="2">
-            <widget class="QPushButton" name="csv_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Open Sans Condensed</family>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>CSV Map</string>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="1" colspan="2">
-            <widget class="QLineEdit" name="vmg_order"/>
-           </item>
-           <item row="1" column="1">
-            <widget class="QLineEdit" name="csv_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="2">
+           <item row="3" column="2">
             <widget class="QPushButton" name="prio_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -236,26 +168,6 @@
              </property>
              <property name="text">
               <string>Prio CSV</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="ifc_label">
-             <property name="text">
-              <string>Waar staan de IFCs?</string>
-             </property>
-             <property name="buddy">
-              <cstring>ifc_path</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="vh_label">
-             <property name="text">
-              <string>VH ordernummer</string>
-             </property>
-             <property name="buddy">
-              <cstring>vh_order</cstring>
              </property>
             </widget>
            </item>
@@ -285,53 +197,27 @@
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
-            <widget class="QLineEdit" name="nesting_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>3</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="csv_label">
+           <item row="0" column="0">
+            <widget class="QLabel" name="ifc_label">
              <property name="text">
-              <string>Waar moeten de CSVs naartoe?</string>
+              <string>Waar staan de IFCs?</string>
              </property>
              <property name="buddy">
-              <cstring>csv_path</cstring>
+              <cstring>ifc_path</cstring>
              </property>
             </widget>
            </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="bb_label_2">
+           <item row="8" column="0">
+            <widget class="QLabel" name="vmg_label">
              <property name="text">
-              <string>CSV producten voor Boerboom</string>
+              <string>VMG ordernummer</string>
              </property>
              <property name="buddy">
-              <cstring>nesting_path</cstring>
+              <cstring>vmg_order</cstring>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="bb_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>3</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
+           <item row="4" column="2">
             <widget class="QPushButton" name="bb_button">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -354,6 +240,137 @@
              </property>
              <property name="text">
               <string>BB CSV</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="bb_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>3</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" colspan="2">
+            <widget class="QLineEdit" name="vh_order"/>
+           </item>
+           <item row="7" column="1" colspan="2">
+            <widget class="QLineEdit" name="bb_order"/>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="bb_label_2">
+             <property name="text">
+              <string>CSV producten voor Boerboom</string>
+             </property>
+             <property name="buddy">
+              <cstring>nesting_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="2">
+            <widget class="QPushButton" name="csv_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>CSV Map</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLineEdit" name="csv_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QLabel" name="nesting_label">
+             <property name="text">
+              <string>CSV nesting prioriteit</string>
+             </property>
+             <property name="buddy">
+              <cstring>nesting_path</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ifc_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="vh_label">
+             <property name="text">
+              <string>VH ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>vh_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="nesting_path">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>3</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLineEdit" name="bulk_path"/>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="bulk_label">
+             <property name="text">
+              <string>Bulk producten voor Boerboom</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="2">
+            <widget class="QPushButton" name="bulk_button">
+             <property name="text">
+              <string>Bulk CSV</string>
              </property>
             </widget>
            </item>

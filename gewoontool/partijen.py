@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import helpers
 
-def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productcodes: list) -> None:
+def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productcodes: list, bulk: list) -> None:
     """Gets the BB parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -10,11 +10,12 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         ordernummer (str): The ordernumber of the project.
         path (str): The path to save the CSV file.
         prio_dict (dict): The dictionary with the priority of the modules.
+        bulk (list): The dataframe with all the parts for the bulk CSV.
     """
     project = df["Projectnummer"].iloc[0]
 
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
-    df = df[df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144") | df["Productcode"].isin(productcodes) | df["Materiaal"].str.contains("BAUB")]
+    df = df[df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69") | ((df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) | ((df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)) | df["Productcode"].isin(productcodes) | df["Materiaal"].str.contains("BAUB")]
 
     if df.empty:
         return
@@ -59,10 +60,15 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         }
     )
     df = df.sort_values(by=["OnderdeelNaam", "Modulenaam"])
+    
+    # Split for bulk
+    df_bulk = df[df["Productcode"].isin(bulk)]
+    df = df[~df["Productcode"].isin(bulk)]
     df.to_csv(f"{path}/{ordernummer}-{project}-BB.csv", index=False, sep=",")
+    df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK.csv", index=False, sep=",")
 
 
-def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productcodes: list) -> None:
+def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productcodes: list, bulk_file: list, bulk: bool=False) -> None:
     """Gets the Van Hulst parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -74,8 +80,9 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
     project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
     
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
-    df = df[(~df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144")) & (~df["Productcode"].isin(productcodes)) & (~df["Materiaal"].str.contains("BAUB"))]
-    # Filter for VMG parts
+    # df = df[(~df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69")) & (~df["Productcode"].isin(productcodes)) & (~df["Materiaal"].str.contains("BAUB") & (~(df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) & (~(df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)))]
+    df = df[~(df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69") | ((df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) | ((df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)) | df["Productcode"].isin(productcodes) | df["Materiaal"].str.contains("BAUB"))]
+
     df = df[~df["Materiaal"].str.contains("PRO")]
 
     if df.empty:
@@ -173,22 +180,29 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, productco
         }
     )
 
-    mask = (
-        (df["Materiaal vH"] == "LVLS")
-        & (df["Dikte vH"] == 45)
-        & df["Station"].isin(["WS05", "WS114"])
-    )
+    if bulk:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk["Nesting Prioriteit"] = 0
+        df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
 
-    df_rest = df[~mask]
-    df_binnenwand = df[mask]
-    df_binnenwand["InkooporderNr"] += "-BW"
-    
-    df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
-    df_vh.to_csv(
-        f"{path}/{ordernummer}-{bouwnummer[-2:]}-{project}-{bouwnummer}-VH.csv",
-        index=False,
-        sep=";",
-    )
+    else:
+        df = df[~df["Productcode"].isin(bulk_file)]
+        mask = (
+            (df["Materiaal vH"] == "LVLS")
+            & (df["Dikte vH"] == 45)
+            & df["Station"].isin(["WS05", "WS114"])
+        )
+
+        df_rest = df[~mask]
+        df_binnenwand = df[mask]
+        df_binnenwand["InkooporderNr"] += "-BW"
+        
+        df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
+        df_vh.to_csv(
+            f"{path}/{ordernummer}-{bouwnummer[-2:]}-{project}-{bouwnummer}-VH.csv",
+            index=False,
+            sep=";",
+        )
 
 
 def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:

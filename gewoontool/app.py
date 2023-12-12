@@ -59,6 +59,7 @@ class CSVProcess(QThread):
         self,
         ifc_path: str,
         csv_path: str,
+        bulk_path: str,
         vh_nesting: str,
         bb_csv: str,
         orderVH: str,
@@ -75,6 +76,7 @@ class CSVProcess(QThread):
         self.ifc_path = ifc_path
         self.ifc_list = helpers.get_ifc_list(self.ifc_path)
         self.csv_path = csv_path
+        self.bulk_path = bulk_path
         self.vh_nesting = vh_nesting
         self.bb_csv = bb_csv
         self.orderVH = orderVH
@@ -105,6 +107,20 @@ class CSVProcess(QThread):
             except FileNotFoundError:
                 self.messageSignal.emit("Geen prioriteit CSV gevonden, de standaard nesting wordt gebruikt.")
                 prioriteit = pd.DataFrame()
+
+            try:
+                bulkbb = pd.read_csv(self.bulk_path)["BB"].tolist()
+                self.messageSignal.emit("Bulk CSV voor BB gevonden.")
+            except FileNotFoundError:
+                self.messageSignal.emit("Geen bulk producten geselecteerd.")
+                bulkbb = []
+
+            try:
+                bulkvh = pd.read_csv(self.bulk_path)["VH"].tolist()
+                self.messageSignal.emit("Bulk CSV voor VH gevonden.")
+            except FileNotFoundError:
+                self.messageSignal.emit("Geen bulk producten geselecteerd.")
+                bulkvh = []
 
             if self.csv_path == "":
                 raise ValueError("Geen CSV locatie geselecteerd.")
@@ -143,7 +159,7 @@ class CSVProcess(QThread):
                 bborder = "IO-000000"
                 if self.orderBB != "":
                     bborder = self.orderBB
-                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk=bulkbb)
 
             if self.vmgChecked:
                 vmgorder = "IO-000000"
@@ -151,13 +167,19 @@ class CSVProcess(QThread):
                     vmgorder = self.orderVMG
                 partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path)
 
+            # Bulk output for VH
+            if self.vhChecked and bulkvh != []:
+                if self.orderVH != "":
+                    vhorder = self.orderVH
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk_file=bulkvh, bulk=True)
+
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
                 if self.vhChecked:
                     vhorder = "IO-000000"
                     if self.orderVH != "":
                         vhorder = self.orderVH
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk_file=bulkvh, bulk=False)
                 if self.erpChecked:
                     partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
 
@@ -567,6 +589,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.csv_button.clicked.connect(self.get_csv)
         self.prio_button.clicked.connect(self.get_prio)
         self.bb_button.clicked.connect(self.get_bb_csv)
+        self.bulk_button.clicked.connect(self.get_bulk_csv)
 
         self.start_button.clicked.connect(self.generate_csv)
         self.exit_button.clicked.connect(self.exit_app)
@@ -608,6 +631,14 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         )
         self.bb_path.setText(file[0])
 
+    def get_bulk_csv(self):
+        """Gets the bulk CSV for the CSV generation process.
+        """
+        file = QFileDialog.getOpenFileName(
+            self, "Selecteer de CSV voor de bulk."
+        )
+        self.bulk_path.setText(file[0])
+
     def get_ifc_report(self):
         """Gets the IFC directory for the report generation process.
         """        
@@ -636,6 +667,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.calc = CSVProcess(
             ifc_path=self.ifc_path.text(),
             csv_path=self.csv_path.text(),
+            bulk_path=self.bulk_path.text(),
             vh_nesting=self.nesting_path.text(),
             bb_csv=self.bb_path.text(),
             orderVH=self.vh_order.text(),

@@ -122,9 +122,6 @@
            <property name="spacing">
             <number>20</number>
            </property>
-           <item row="8" column="1" colspan="2">
-            <widget class="QLineEdit" name="vmg_order"/>
-           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="csv_label">
              <property name="text">
@@ -135,65 +132,16 @@
              </property>
             </widget>
            </item>
-           <item row="7" column="0">
-            <widget class="QLabel" name="bb_label">
-             <property name="text">
-              <string>BB ordernummer</string>
-             </property>
-             <property name="buddy">
-              <cstring>bb_order</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="2">
-            <widget class="QPushButton" name="prio_button">
+           <item row="3" column="1">
+            <widget class="QLineEdit" name="nesting_path">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
+               <horstretch>3</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
-             <property name="font">
-              <font>
-               <family>Open Sans Condensed</family>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>Prio CSV</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2">
-            <widget class="QPushButton" name="ifc_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Open Sans Condensed</family>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>IFC Map</string>
+             <property name="readOnly">
+              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -207,7 +155,7 @@
              </property>
             </widget>
            </item>
-           <item row="8" column="0">
+           <item row="7" column="0">
             <widget class="QLabel" name="vmg_label">
              <property name="text">
               <string>VMG ordernummer</string>
@@ -217,37 +165,14 @@
              </property>
             </widget>
            </item>
-           <item row="4" column="2">
-            <widget class="QPushButton" name="bb_button">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>1</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="font">
-              <font>
-               <family>Open Sans Condensed</family>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="text">
-              <string>BB CSV</string>
-             </property>
-            </widget>
+           <item row="7" column="1" colspan="2">
+            <widget class="QLineEdit" name="vmg_order"/>
            </item>
-           <item row="4" column="1">
-            <widget class="QLineEdit" name="bb_path">
+           <item row="0" column="1">
+            <widget class="QLineEdit" name="ifc_path">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>3</horstretch>
+               <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
@@ -256,21 +181,41 @@
              </property>
             </widget>
            </item>
-           <item row="6" column="1" colspan="2">
-            <widget class="QLineEdit" name="vh_order"/>
-           </item>
-           <item row="7" column="1" colspan="2">
-            <widget class="QLineEdit" name="bb_order"/>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="bb_label_2">
+           <item row="4" column="2">
+            <widget class="QPushButton" name="bulk_button">
              <property name="text">
-              <string>CSV producten voor Boerboom</string>
-             </property>
-             <property name="buddy">
-              <cstring>nesting_path</cstring>
+              <string>Bulk CSV</string>
              </property>
             </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QLabel" name="vh_label">
+             <property name="text">
+              <string>VH ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>vh_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1" colspan="2">
+            <widget class="QLineEdit" name="bb_order"/>
+           </item>
+           <item row="6" column="0">
+            <widget class="QLabel" name="bb_label">
+             <property name="text">
+              <string>BB ordernummer</string>
+             </property>
+             <property name="buddy">
+              <cstring>bb_order</cstring>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1" colspan="2">
+            <widget class="QLineEdit" name="vh_order"/>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLineEdit" name="bulk_path"/>
            </item>
            <item row="1" column="2">
             <widget class="QPushButton" name="csv_button">
@@ -311,6 +256,65 @@
              </property>
             </widget>
            </item>
+           <item row="3" column="2">
+            <widget class="QPushButton" name="prio_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Prio CSV</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0">
+            <widget class="QLabel" name="bulk_label">
+             <property name="text">
+              <string>CSV bulk producten</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2">
+            <widget class="QPushButton" name="ifc_button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>1</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <family>Open Sans Condensed</family>
+               <pointsize>10</pointsize>
+               <weight>75</weight>
+               <italic>false</italic>
+               <bold>true</bold>
+               <underline>false</underline>
+               <strikeout>false</strikeout>
+               <stylestrategy>PreferAntialias</stylestrategy>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>IFC Map</string>
+             </property>
+            </widget>
+           </item>
            <item row="3" column="0">
             <widget class="QLabel" name="nesting_label">
              <property name="text">
@@ -318,59 +322,6 @@
              </property>
              <property name="buddy">
               <cstring>nesting_path</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QLineEdit" name="ifc_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QLabel" name="vh_label">
-             <property name="text">
-              <string>VH ordernummer</string>
-             </property>
-             <property name="buddy">
-              <cstring>vh_order</cstring>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="QLineEdit" name="nesting_path">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-               <horstretch>3</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="readOnly">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="1">
-            <widget class="QLineEdit" name="bulk_path"/>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="bulk_label">
-             <property name="text">
-              <string>Bulk producten voor Boerboom</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="2">
-            <widget class="QPushButton" name="bulk_button">
-             <property name="text">
-              <string>Bulk CSV</string>
              </property>
             </widget>
            </item>
@@ -696,16 +647,10 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="erp_box">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
+            <widget class="QGroupBox" name="groupBox">
              <property name="font">
               <font>
-               <family>Open Sans Condensed</family>
+               <family>MS Shell Dlg 2</family>
                <pointsize>12</pointsize>
                <weight>75</weight>
                <italic>false</italic>
@@ -717,7 +662,7 @@
               </font>
              </property>
              <property name="title">
-              <string>ERP CSV per:</string>
+              <string>Extra opties</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -725,121 +670,17 @@
              <property name="flat">
               <bool>true</bool>
              </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
               <item>
-               <widget class="QRadioButton" name="radio_bn">
-                <property name="font">
-                 <font>
-                  <family>Open Sans Condensed</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <underline>false</underline>
-                  <strikeout>false</strikeout>
-                  <stylestrategy>PreferAntialias</stylestrategy>
-                  <kerning>true</kerning>
-                 </font>
+               <widget class="QCheckBox" name="ws_csv">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Bouwnummer</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="radio_mod">
-                <property name="font">
-                 <font>
-                  <family>Open Sans Condensed</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <underline>false</underline>
-                  <strikeout>false</strikeout>
-                  <stylestrategy>PreferAntialias</stylestrategy>
-                  <kerning>true</kerning>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Module</string>
-                </property>
-                <property name="checked">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="prio_box">
-             <property name="font">
-              <font>
-               <family>Open Sans Condensed</family>
-               <pointsize>12</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-               <stylestrategy>PreferAntialias</stylestrategy>
-               <kerning>true</kerning>
-              </font>
-             </property>
-             <property name="title">
-              <string>Prioriteit:</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <property name="flat">
-              <bool>true</bool>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QRadioButton" name="radio_def">
-                <property name="font">
-                 <font>
-                  <family>Open Sans Condensed</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <underline>false</underline>
-                  <strikeout>false</strikeout>
-                  <stylestrategy>PreferAntialias</stylestrategy>
-                  <kerning>true</kerning>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Normaal</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="radio_ext">
-                <property name="font">
-                 <font>
-                  <family>Open Sans Condensed</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <italic>false</italic>
-                  <bold>true</bold>
-                  <underline>false</underline>
-                  <strikeout>false</strikeout>
-                  <stylestrategy>PreferAntialias</stylestrategy>
-                  <kerning>true</kerning>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Uitgebreid</string>
+                 <string>CSV voor WS101, 102, 103?</string>
                 </property>
                 <property name="checked">
                  <bool>false</bool>

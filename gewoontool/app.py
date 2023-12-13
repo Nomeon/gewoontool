@@ -59,18 +59,16 @@ class CSVProcess(QThread):
         self,
         ifc_path: str,
         csv_path: str,
-        bulk_path: str,
         vh_nesting: str,
-        bb_csv: str,
+        bulk_path: str,
         orderVH: str,
         orderBB: str,
         orderVMG: str,
-        bnormt: bool,
-        prio_standard: bool,
         bbChecked: bool,
         vhChecked: bool,
         vmgChecked: bool,
         erpChecked: bool,
+        cassettes: bool,
     ) -> None:
         super().__init__()
         self.ifc_path = ifc_path
@@ -78,18 +76,19 @@ class CSVProcess(QThread):
         self.csv_path = csv_path
         self.bulk_path = bulk_path
         self.vh_nesting = vh_nesting
-        self.bb_csv = bb_csv
         self.orderVH = orderVH
         self.orderBB = orderBB
         self.orderVMG = orderVMG
-        self.bnormt = bnormt
-        self.prio_standard = prio_standard
         self.bbChecked = bbChecked
         self.vhChecked = vhChecked
         self.vmgChecked = vmgChecked
         self.erpChecked = erpChecked
+        self.cassettes = cassettes
 
     def run(self):
+        # Checkbox voor WS101, 102, 103, eruit filteren voor BB, VH, VMG
+        # Bulk kan voor VMG
+
         """Executes the IFC to CSV conversion process.
 
         Raises:
@@ -99,7 +98,6 @@ class CSVProcess(QThread):
         try:
             prog, length = 1, len(self.ifc_list)
             df_list = []
-            bb_productcodes = []
 
             try: 
                 prioriteit = pd.read_csv(self.vh_nesting)
@@ -109,18 +107,14 @@ class CSVProcess(QThread):
                 prioriteit = pd.DataFrame()
 
             try:
-                bulkbb = pd.read_csv(self.bulk_path)["BB"].tolist()
-                self.messageSignal.emit("Bulk CSV voor BB gevonden.")
+                bulk = pd.read_csv(self.bulk_path)
+                self.messageSignal.emit("Bulk CSV gevonden.")
+                bulkbb = bulk["BB"].tolist()
+                bulkvh = bulk["VH"].tolist()
+                bulkvmg = bulk["VMG"].tolist()
             except FileNotFoundError:
-                self.messageSignal.emit("Geen bulk producten geselecteerd.")
-                bulkbb = []
-
-            try:
-                bulkvh = pd.read_csv(self.bulk_path)["VH"].tolist()
-                self.messageSignal.emit("Bulk CSV voor VH gevonden.")
-            except FileNotFoundError:
-                self.messageSignal.emit("Geen bulk producten geselecteerd.")
-                bulkvh = []
+                self.messageSignal.emit("Geen bulk CSV gevonden.")
+                bulkbb, bulkvh, bulkvmg = [], [], []
 
             if self.csv_path == "":
                 raise ValueError("Geen CSV locatie geselecteerd.")
@@ -130,13 +124,6 @@ class CSVProcess(QThread):
             
             if len(self.csv_path) == 0:
                 raise ValueError("Geen CSV locatie geselecteerd.")
-            
-            if self.bbChecked and len(self.bb_csv) != 0:
-                if not os.path.exists(self.bb_csv):
-                    raise FileNotFoundError(f"De CSV met productcodes is niet gevonden op {self.bb_csv}.")
-                else:
-                    self.messageSignal.emit("CSV met productcodes gevonden.")
-                    bb_productcodes = pd.read_csv(self.bb_csv)["Productcode"].tolist()
 
             pool = Pool(processes=(cpu_count() - 2))
             self.messageSignal.emit(f"Start verwerken van {length} IFCs...")
@@ -153,25 +140,25 @@ class CSVProcess(QThread):
             self.messageSignal.emit(f"IFCs zijn verwerkt, de CSVs worden gemaakt...")
             df = helpers.combine_dfs(df_list=df_list)
             bns = df["Bouwnummer"].unique()
-            prio = helpers.create_nesting(combined_df=df, prioriteit=prioriteit, extended_prio=self.prio_standard)
+            prio = helpers.create_nesting(combined_df=df, prioriteit=prioriteit)
 
             if self.bbChecked:
                 bborder = "IO-000000"
                 if self.orderBB != "":
                     bborder = self.orderBB
-                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk=bulkbb)
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk=bulkbb, cassettes=self.cassettes)
 
             if self.vmgChecked:
                 vmgorder = "IO-000000"
                 if self.orderVMG != "":
                     vmgorder = self.orderVMG
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path)
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk=bulkvmg, cassettes=self.cassettes)
 
-            # Bulk output for VH
             if self.vhChecked and bulkvh != []:
+                vhorder = "IO-000000"
                 if self.orderVH != "":
                     vhorder = self.orderVH
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk_file=bulkvh, bulk=True)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=self.cassettes)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
@@ -179,9 +166,9 @@ class CSVProcess(QThread):
                     vhorder = "IO-000000"
                     if self.orderVH != "":
                         vhorder = self.orderVH
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, productcodes=bb_productcodes, bulk_file=bulkvh, bulk=False)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=self.cassettes)
                 if self.erpChecked:
-                    partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
+                    partijen.ERP(df=df_bn, path=self.csv_path)
 
             self.messageSignal.emit(f"Klaar met converteren naar CSVs!")
             self.messageSignal.emit(f"De tool kan afgesloten worden.")
@@ -340,7 +327,7 @@ class IFCProcess(QThread):
         self.displaySignal.emit(shapesA, f"TEMP/{ifc_name}.png", Graphic3d_NOM_GOLD, 0.8, True, True, True, True)
         self.displaySignal.emit(df.Shape.values.tolist(), f"TEMP/Hele module {ifc_name}.png", Graphic3d_NOM_TRANSPARENT, 0.95, False, True, False, False)
 
-    # TODO! How to load this from checks.py using pyinstaller???
+    # TODO How to load this from checks.py using pyinstaller???
     def empty(self, df: pd.DataFrame) -> pd.DataFrame:
         """Checks if there are empty values in the dataframe.
 
@@ -588,9 +575,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.ifc_button.clicked.connect(self.get_ifc_csv)
         self.csv_button.clicked.connect(self.get_csv)
         self.prio_button.clicked.connect(self.get_prio)
-        self.bb_button.clicked.connect(self.get_bb_csv)
         self.bulk_button.clicked.connect(self.get_bulk_csv)
-
         self.start_button.clicked.connect(self.generate_csv)
         self.exit_button.clicked.connect(self.exit_app)
 
@@ -623,14 +608,6 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         )
         self.nesting_path.setText(file[0])
 
-    def get_bb_csv(self):
-        """Gets the BB CSV for the CSV generation process.
-        """
-        file = QFileDialog.getOpenFileName(
-            self, "Selecteer de CSV voor de BB."
-        )
-        self.bb_path.setText(file[0])
-
     def get_bulk_csv(self):
         """Gets the bulk CSV for the CSV generation process.
         """
@@ -656,29 +633,23 @@ class App(QMainWindow, design.Ui_CSVgenerator):
     def generate_csv(self):
         """Starts the CSV generation process.
         """        
-        bnormt = False
-        if self.radio_bn.isChecked():
-            bnormt = True
-
-        prio_standard = False
-        if self.radio_ext.isChecked():
-            prio_standard = True
+        cassettes = False
+        if self.ws_csv.isChecked():
+            cassettes = True
 
         self.calc = CSVProcess(
             ifc_path=self.ifc_path.text(),
             csv_path=self.csv_path.text(),
             bulk_path=self.bulk_path.text(),
             vh_nesting=self.nesting_path.text(),
-            bb_csv=self.bb_path.text(),
             orderVH=self.vh_order.text(),
             orderBB=self.bb_order.text(),
             orderVMG=self.vmg_order.text(),
-            bnormt=bnormt,
-            prio_standard=prio_standard,
             bbChecked=self.bb_check.isChecked(),
             vhChecked=self.vh_check.isChecked(),
             vmgChecked=self.vmg_check.isChecked(),
             erpChecked=self.erp_check.isChecked(),
+            cassettes=cassettes,
         )
 
         self.calc.csvProgress.connect(self.updateCsvProgress)

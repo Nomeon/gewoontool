@@ -143,7 +143,7 @@ def get_dikte(column: str) -> int:
 
 
 def create_nesting(    
-    combined_df: pd.DataFrame, prioriteit: pd.DataFrame, extended_prio: bool = False
+    combined_df: pd.DataFrame, prioriteit: pd.DataFrame
 ) -> dict:
     """Creates a dictionary with the nesting priority.
 
@@ -179,19 +179,6 @@ def create_nesting(
         for i in range(len(data)):
             data[i]["Prio"] = i
         df_prio = pd.DataFrame(data)
-        prio_dict = dict(zip(df_prio.Naam, df_prio.Prio))
-        return prio_dict
-
-    if extended_prio:
-        modules = prioriteit.Condition.tolist()
-        prioriteit = prioriteit.sort_values(by=["Value"])
-        for bn, mt, ws in product(
-            sorted(bouwnummers), sorted_werkstations, reversed(modules)
-        ):
-            row = f"{project}-{bn}-{mt}-{ws}"
-            data.append({"Naam": row})
-        df_prio = pd.DataFrame(data).reset_index().rename(columns={"index": "Prio"})
-        df_prio["Prio"] = df_prio["Prio"] + 1
         prio_dict = dict(zip(df_prio.Naam, df_prio.Prio))
         return prio_dict
 

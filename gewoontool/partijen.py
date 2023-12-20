@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import helpers
 
-def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk: list, cassettes: bool) -> None:
+def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, bulk: bool, cassettes: bool) -> None:
     """Gets the BB parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -12,7 +12,7 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk: lis
         prio_dict (dict): The dictionary with the priority of the modules.
         bulk (list): The dataframe with all the parts for the bulk CSV.
     """
-    project = df["Projectnummer"].iloc[0]
+    project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
 
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
     df = df[df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69") | ((df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) | ((df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)) | df["Materiaal"].str.contains("BAUB")]
@@ -60,29 +60,55 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk: lis
         }
     )
     df = df.sort_values(by=["OnderdeelNaam", "Modulenaam"])
-    
-    # Split for bulk
-    if bulk != []:
-        df_bulk = df[df["Productcode"].isin(bulk)]
-        df = df[~df["Productcode"].isin(bulk)]
-        if not df_bulk.empty:
-            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK.csv", index=False, sep=",")
 
-    if cassettes:
-        # Filter out WS101, WS102, WS103
+    # Normaal-Normaal, bulk = False and casettes = False, BN
+    if not bulk and not cassettes:
+        df = df[~df["Productcode"].isin(bulk_file)]
         df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
-        df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
-        if not df_cass.empty:
-            df_cass.to_csv(
-                f"{path}/{ordernummer}-{project}-BB-CASSETTES.csv",
-                index=False,
-                sep=",",
-            )
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer}-BB.csv", index=False, sep=";")
 
-    df.to_csv(f"{path}/{ordernummer}-{project}-BB.csv", index=False, sep=",")
+    # Normaal-Bulk, bulk = True and casettes = False, BATCH
+    elif bulk and not cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[~df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        if not df_bulk.empty:
+            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK.csv", index=False, sep=";")
+
+    # Cas-Normaal, bulk = False and casettes = True, BN
+    elif not bulk and cassettes:
+        df = df[~df["Productcode"].isin(bulk_file)]
+        df = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer}-BB-CASSETTES.csv", index=False, sep=";")
+    
+    # Cas-Bulk, bulk = True and casettes = True, BATCH
+    elif bulk and cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        if not df_bulk.empty:
+            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-CASSETTES-BULK.csv", index=False, sep=";")
+
+    # # Split for bulk
+    # if bulk:
+    #     df_bulk = df[df["Productcode"].isin(bulk_file)]
+    #     df = df[~df["Productcode"].isin(bulk_file)]
+    #     if not df_bulk.empty:
+    #         df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK.csv", index=False, sep=",")
+
+    # if cassettes:
+    #     # Filter out WS101, WS102, WS103
+    #     df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
+    #     df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
+    #     if not df_cass.empty:
+    #         df_cass.to_csv(
+    #             f"{path}/{ordernummer}-{project}-BB-CASSETTES.csv",
+    #             index=False,
+    #             sep=",",
+    #         )
+
+    # df.to_csv(f"{path}/{ordernummer}-{project}-BB.csv", index=False, sep=",")
 
 
-def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, cassettes: bool, bulk: bool=False) -> None:
+def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, bulk: bool, cassettes: bool) -> None:
     """Gets the Van Hulst parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -92,8 +118,13 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         prio_dict (dict): The dictionary with the priority of the modules.
     """
     project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
-    bouwnummer = bouwnummer.replace("BN", "")
-    
+
+    #! Implement bouwnummer voor verschill tussen H5-01 en BN35 (H5-01 altijd helemaal)
+    bouwnummer = df["Bouwnummer"].iloc[0]
+    bouwnummer_kort = bouwnummer
+    if bouwnummer.startswith("BN"):
+        bouwnummer_kort = bouwnummer.replace("BN", "")
+   
     df = df[~df["Productcode"].apply(helpers.delete_productcode)]
     df = df[~(df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69") | ((df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) | ((df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)) | df["Materiaal"].str.contains("BAUB"))]
 
@@ -103,11 +134,11 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         return
 
     df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)
-    df["InkooporderNr"] = f"{ordernummer}-{bouwnummer}"
-    df["Klant"] = f"geWOONhout {project} BN{bouwnummer}"
+    df["InkooporderNr"] = f"{ordernummer}-{bouwnummer_kort}"
+    df["Klant"] = f"geWOONhout {project} {bouwnummer}"
     df["Order"] = (
         str(project)
-        + " BN"
+        + " "
         + str(bouwnummer)
         + " "
         + df["Materiaal"]
@@ -117,7 +148,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     df["Bestand"] = (
         "P:\\"
         + str(project)
-        + "\\BN"
+        + "\\"
         + bouwnummer
         + "\\DWG\\"
         + df["Materiaal"]
@@ -194,45 +225,158 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         }
     )
 
-    if bulk:
-        df_bulk = df[df["Productcode"].isin(bulk_file)]
-        df_bulk["Nesting Prioriteit"] = 0
-        if not df_bulk.empty:
-            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
+    # Add -BW to the order number for binnenwanden, checken of dit mag voor alles.
+    mask = (
+        (df["Materiaal vH"] == "LVLS")
+        & (df["Dikte vH"] == 45)
+        & df["Station"].isin(["WS05", "WS114"])
+    )
 
-    else:
+    df_rest = df[~mask]
+    df_binnenwand = df[mask]
+    df_binnenwand["InkooporderNr"] += "-BW"
+    df = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
+
+    # Normaal-Normaal, bulk = False and casettes = False, BN
+    if not bulk and not cassettes:
         df = df[~df["Productcode"].isin(bulk_file)]
-        mask = (
-            (df["Materiaal vH"] == "LVLS")
-            & (df["Dikte vH"] == 45)
-            & df["Station"].isin(["WS05", "WS114"])
-        )
+        df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VH.csv", index=False, sep=";")
 
-        df_rest = df[~mask]
-        df_binnenwand = df[mask]
-        df_binnenwand["InkooporderNr"] += "-BW"
+    # Normaal-Bulk, bulk = True and casettes = False, BATCH
+    elif bulk and not cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[~df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
+
+    # Cas-Normaal, bulk = False and casettes = True, BN
+    elif not bulk and cassettes:
+        df = df[~df["Productcode"].isin(bulk_file)]
+        df = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VH-CASSETTES.csv", index=False, sep=";")
+
+    # Cas-Bulk, bulk = True and casettes = True, BATCH
+    elif bulk and cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-CASSETTES-BULK.csv", index=False, sep=";")
+
+    # if bulk:
+    #     df_bulk = df[df["Productcode"].isin(bulk_file)]
+    #     df_bulk["Nesting Prioriteit"] = 0
+    #     if not df_bulk.empty:
+    #         df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
+
+    # else:
+    #     df = df[~df["Productcode"].isin(bulk_file)]
+    #     mask = (
+    #         (df["Materiaal vH"] == "LVLS")
+    #         & (df["Dikte vH"] == 45)
+    #         & df["Station"].isin(["WS05", "WS114"])
+    #     )
+
+    #     df_rest = df[~mask]
+    #     df_binnenwand = df[mask]
+    #     df_binnenwand["InkooporderNr"] += "-BW"
         
-        df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
+    #     df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
 
-        if cassettes:
-            # Filter out WS101, WS102, WS103
-            df_vh = df_vh[~df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
-            df_cass = df_vh[df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
-            if not df_cass.empty:
-                df_cass.to_csv(
-                    f"{path}/{ordernummer}-{bouwnummer}-{project}-BN{bouwnummer}-VH-CASSETTES.csv",
-                    index=False,
-                    sep=";",
-                )
+    #     if cassettes:
+    #         df_vh = df_vh[~df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
+    #         df_cass = df_vh[df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
+    #         if not df_cass.empty:
+    #             df_cass.to_csv(
+    #                 f"{path}/{ordernummer}-{bouwnummer}-{project}-{bouwnummer_kort}-VH-CASSETTES.csv",
+    #                 index=False,
+    #                 sep=";",
+    #             )
 
-        df_vh.to_csv(
-            f"{path}/{ordernummer}-{bouwnummer}-{project}-BN{bouwnummer}-VH.csv",
-            index=False,
-            sep=";",
-        )
+    #     df_vh.to_csv(
+    #         f"{path}/{ordernummer}-{bouwnummer}-{project}-{bouwnummer_kort}-VH.csv",
+    #         index=False,
+    #         sep=";",
+    #     )
 
 
-def ERP(df: pd.DataFrame, path: str) -> None:
+def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bool, cassettes: bool) -> None:
+    """Gets the VMG parts from the dataframe and saves it to a CSV file.
+
+    Args:
+        df (pd.DataFrame): The dataframe with all the parts.
+        ordernummer (str): The ordernumber of the project.
+        path (str): The path to save the CSV file.
+    """
+    project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
+    df = df[df["Materiaal"].str.contains("PRO")]
+
+    if df.empty:
+        return
+
+    df["Order"] = ordernummer
+    df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)
+    df["Materiaal"] = df["Materiaal"] + " " + df["Dikte"].astype(str)
+    df = df[
+        [
+            "Order",
+            "Modulenaam",
+            "Station",
+            "Name",
+            "Materiaal",
+            "Productcode",
+            "Lengte",
+            "Breedte",
+            "Aantal",
+        ]
+    ]
+    df = df.rename(columns={"Name": "Naam"})
+
+    df = df.astype({"Aantal": "int"})
+    df = df.groupby(df.columns.tolist(), as_index=False).size()
+    df["Aantal"] = (df["Aantal"] * df["size"]).astype(int)
+    df = df.drop("size", axis=1)
+
+    # df = df[~df["Productcode"].isin(bulk_file)]
+    # df_bulk = df[df["Productcode"].isin(bulk_file)]
+
+    # Normaal-Normaal, bulk = False and casettes = False, BN
+    if not bulk and not cassettes:
+        df = df[~df["Productcode"].isin(bulk_file)]
+        df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer}-VMG.csv", index=False, sep=";")
+
+    # Normaal-Bulk, bulk = True and casettes = False, BATCH
+    elif bulk and not cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[~df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        if not df_bulk.empty:
+            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-BULK.csv", index=False, sep=";")
+
+    # Cas-Normaal, bulk = False and casettes = True, BN
+    elif not bulk and cassettes:
+        df = df[~df["Productcode"].isin(bulk_file)]
+        df = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
+        df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer}-VMG-CASSETTES.csv", index=False, sep=";")
+
+    # Cas-Bulk, bulk = True and casettes = True, BATCH
+    elif bulk and cassettes:
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
+        if not df_bulk.empty:
+            df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-CASSETTES-BULK.csv", index=False, sep=";")
+
+    # if cassettes:
+    #     # Filter out WS101, WS102, WS103
+    #     df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
+    #     df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
+    #     if not df_cass.empty:
+    #         df_cass.to_csv(f"{path}/{ordernummer}-{project}-VMG-CASSETTES.csv", index=False, sep=";")
+
+    # df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False, sep=";")
+    # if not df_bulk.empty:
+    #     df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-BULK.csv", index=False, sep=";")
+
+
+def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:
     """Gets the ERP parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -295,56 +439,13 @@ def ERP(df: pd.DataFrame, path: str) -> None:
     )
 
     df_merged["IFC-bestand"] = df_merged["IFC-bestand"].str.replace(" ", "_")
-    df_merged.to_csv(f"{path}/{project}-{bouwnummer}-ERP.csv", index=False, sep=";")
-
-
-def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk: list, cassettes: bool) -> None:
-    """Gets the VMG parts from the dataframe and saves it to a CSV file.
-
-    Args:
-        df (pd.DataFrame): The dataframe with all the parts.
-        ordernummer (str): The ordernumber of the project.
-        path (str): The path to save the CSV file.
-    """
-    project = df["Projectnummer"].iloc[0]
-    df = df[df["Materiaal"].str.contains("PRO")]
-
-    if df.empty:
-        return
-
-    df["Order"] = ordernummer
-    df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)
-    df["Materiaal"] = df["Materiaal"] + " " + df["Dikte"].astype(str)
-    df = df[
-        [
-            "Order",
-            "Modulenaam",
-            "Station",
-            "Name",
-            "Materiaal",
-            "Productcode",
-            "Lengte",
-            "Breedte",
-            "Aantal",
-        ]
-    ]
-    df = df.rename(columns={"Name": "Naam"})
-
-    df = df.astype({"Aantal": "int"})
-    df = df.groupby(df.columns.tolist(), as_index=False).size()
-    df["Aantal"] = (df["Aantal"] * df["size"]).astype(int)
-    df = df.drop("size", axis=1)
-
-    df = df[~df["Productcode"].isin(bulk)]
-    df_bulk = df[df["Productcode"].isin(bulk)]
-
-    if cassettes:
-        # Filter out WS101, WS102, WS103
-        df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
-        df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
-        if not df_cass.empty:
-            df_cass.to_csv(f"{path}/{ordernummer}-{project}-VMG-CASSETTES.csv", index=False, sep=";")
-
-    df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False, sep=";")
-    if not df_bulk.empty:
-        df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-BULK.csv", index=False, sep=";")
+    
+    if bnormt:
+        df_merged.to_csv(f"{path}/{project}-{bouwnummer}-ERP.csv", index=False, sep=";")
+    else:
+        modules = df_merged["Moduletype"].unique()
+        for mod_label in modules:
+            df_mod = df_merged[df_merged["Moduletype"] == mod_label]
+            df_mod.to_csv(
+                f"{path}/{project}-{bouwnummer}-{mod_label}.csv", index=False, sep=";"
+            )

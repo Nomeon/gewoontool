@@ -64,6 +64,7 @@ class CSVProcess(QThread):
         orderVH: str,
         orderBB: str,
         orderVMG: str,
+        bnormt: bool,
         bbChecked: bool,
         vhChecked: bool,
         vmgChecked: bool,
@@ -79,6 +80,7 @@ class CSVProcess(QThread):
         self.orderVH = orderVH
         self.orderBB = orderBB
         self.orderVMG = orderVMG
+        self.bnormt = bnormt
         self.bbChecked = bbChecked
         self.vhChecked = vhChecked
         self.vmgChecked = vmgChecked
@@ -86,9 +88,6 @@ class CSVProcess(QThread):
         self.cassettes = cassettes
 
     def run(self):
-        # Checkbox voor WS101, 102, 103, eruit filteren voor BB, VH, VMG
-        # Bulk kan voor VMG
-
         """Executes the IFC to CSV conversion process.
 
         Raises:
@@ -98,6 +97,13 @@ class CSVProcess(QThread):
         try:
             prog, length = 1, len(self.ifc_list)
             df_list = []
+            bborder, vhorder, vmgorder = "IO-000000", "IO-000000", "IO-000000"
+            if self.orderBB != "":
+                bborder = self.orderBB
+            if self.orderVH != "":
+                vhorder = self.orderVH
+            if self.orderVMG != "":
+                vmgorder = self.orderVMG
 
             try: 
                 prioriteit = pd.read_csv(self.vh_nesting)
@@ -142,33 +148,79 @@ class CSVProcess(QThread):
             bns = df["Bouwnummer"].unique()
             prio = helpers.create_nesting(combined_df=df, prioriteit=prioriteit)
 
-            if self.bbChecked:
-                bborder = "IO-000000"
-                if self.orderBB != "":
-                    bborder = self.orderBB
-                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk=bulkbb, cassettes=self.cassettes)
+            # Normaal:
+            #     Normaal-Normaal op BN (inc prio)
+            #     Normaal-BULK	per Batch
+            # Cassettes:
+            #     Cas-Normaal	op BN (inc prio)
+            #     Cas-BULK	op Batch
 
-            if self.vmgChecked:
-                vmgorder = "IO-000000"
-                if self.orderVMG != "":
-                    vmgorder = self.orderVMG
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk=bulkvmg, cassettes=self.cassettes)
-
+            # Normaal-BULK
+            if self.bbChecked and bulkbb != []:
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=False)
             if self.vhChecked and bulkvh != []:
-                vhorder = "IO-000000"
-                if self.orderVH != "":
-                    vhorder = self.orderVH
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=self.cassettes)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=False)
+            if self.vmgChecked and bulkvmg != []:
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=False)
+
+            # Cas-BULK
+            if self.bbChecked and bulkbb != [] and self.cassettes:
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=True)
+            if self.vhChecked and bulkvh != [] and self.cassettes:
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=True)
+            if self.vmgChecked and bulkvmg != [] and self.cassettes:
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=True)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
-                if self.vhChecked:
-                    vhorder = "IO-000000"
-                    if self.orderVH != "":
-                        vhorder = self.orderVH
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=self.cassettes)
                 if self.erpChecked:
-                    partijen.ERP(df=df_bn, path=self.csv_path)
+                    partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
+
+                # Normaal-Normaal
+                if self.bbChecked:
+                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=False)
+                if self.vhChecked:
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=False)
+                if self.vmgChecked:
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=False)
+
+                # Cas-Normaal
+                if self.bbChecked and self.cassettes:
+                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=True)
+                if self.vhChecked and self.cassettes:
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=True)
+                if self.vmgChecked and self.cassettes:
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=True)
+
+            # First, per batch for BB, VMG and VH, only if Bulk is not empty
+            # if self.bbChecked and bulkbb != []:
+            #     bborder = "IO-000000"
+            #     if self.orderBB != "":
+            #         bborder = self.orderBB
+            #     partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=self.cassettes)
+            
+            # if self.vmgChecked and bulkvmg != []:
+            #     vmgorder = "IO-000000"
+            #     if self.orderVMG != "":
+            #         vmgorder = self.orderVMG
+            #     partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=self.cassettes)
+
+            # if self.vhChecked and bulkvh != []:
+            #     vhorder = "IO-000000"
+            #     if self.orderVH != "":
+            #         vhorder = self.orderVH
+            #     partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=self.cassettes)
+
+            # Then, per BN for BB, VMG and VH, 
+            # for bn in bns:
+            #     df_bn = df[df["Bouwnummer"] == bn]
+            #     if self.vhChecked:
+            #         vhorder = "IO-000000"
+            #         if self.orderVH != "":
+            #             vhorder = self.orderVH
+            #         partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=self.cassettes)
+            #     if self.erpChecked:
+            #         partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
 
             self.messageSignal.emit(f"Klaar met converteren naar CSVs!")
             self.messageSignal.emit(f"De tool kan afgesloten worden.")
@@ -645,6 +697,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
             orderVH=self.vh_order.text(),
             orderBB=self.bb_order.text(),
             orderVMG=self.vmg_order.text(),
+            bnormt=self.bnormt.isChecked(),
             bbChecked=self.bb_check.isChecked(),
             vhChecked=self.vh_check.isChecked(),
             vmgChecked=self.vmg_check.isChecked(),

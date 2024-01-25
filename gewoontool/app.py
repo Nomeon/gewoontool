@@ -157,19 +157,19 @@ class CSVProcess(QThread):
 
             # Normaal-BULK
             if self.bbChecked and bulkbb != []:
-                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=False)
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=False, cass_global=self.cassettes)
             if self.vhChecked and bulkvh != []:
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=False)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=False, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != []:
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=False)
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=False, cass_global=self.cassettes)
 
             # Cas-BULK
             if self.bbChecked and bulkbb != [] and self.cassettes:
-                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=True)
+                partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=True, cass_global=self.cassettes)
             if self.vhChecked and bulkvh != [] and self.cassettes:
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=True)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=True, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != [] and self.cassettes:
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=True)
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=True, cass_global=self.cassettes)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
@@ -178,19 +178,19 @@ class CSVProcess(QThread):
 
                 # Normaal-Normaal
                 if self.bbChecked:
-                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=False)
+                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=False, cass_global=self.cassettes)
                 if self.vhChecked:
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=False)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=False, cass_global=self.cassettes)
                 if self.vmgChecked:
-                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=False)
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=False, cass_global=self.cassettes)
 
                 # Cas-Normaal
                 if self.bbChecked and self.cassettes:
-                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=True)
+                    partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=True, cass_global=self.cassettes)
                 if self.vhChecked and self.cassettes:
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=True)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=True, cass_global=self.cassettes)
                 if self.vmgChecked and self.cassettes:
-                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=True)
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=True, cass_global=self.cassettes)
 
             # First, per batch for BB, VMG and VH, only if Bulk is not empty
             # if self.bbChecked and bulkbb != []:

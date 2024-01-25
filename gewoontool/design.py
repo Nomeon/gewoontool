@@ -373,6 +373,9 @@ class Ui_CSVgenerator(object):
         self.vmg_check.setChecked(True)
         self.vmg_check.setObjectName("vmg_check")
         self.verticalLayout_3.addWidget(self.vmg_check)
+        self.ws198_check = QtWidgets.QCheckBox(self.csvs_box)
+        self.ws198_check.setObjectName("ws198_check")
+        self.verticalLayout_3.addWidget(self.ws198_check)
         self.optionGrid.addWidget(self.csvs_box)
         self.groupBox = QtWidgets.QGroupBox(self.option_box)
         font = QtGui.QFont()
@@ -661,6 +664,7 @@ class Ui_CSVgenerator(object):
         self.vh_check.setText(_translate("CSVgenerator", "Van Hulst"))
         self.bb_check.setText(_translate("CSVgenerator", "Boerboom"))
         self.vmg_check.setText(_translate("CSVgenerator", "VMG"))
+        self.ws198_check.setText(_translate("CSVgenerator", "Extra lijst WS198"))
         self.groupBox.setTitle(_translate("CSVgenerator", "Extra opties"))
         self.bnormt.setText(_translate("CSVgenerator", "ERP split op BN? (anders op MT)"))
         self.ws_csv.setText(_translate("CSVgenerator", "CSV voor WS101, 102, 103?"))
@@ -678,3 +682,13 @@ class Ui_CSVgenerator(object):
         self.air_check.setText(_translate("CSVgenerator", "Controleren op luchtdichting?"))
         self.preview_box.setTitle(_translate("CSVgenerator", "Preview"))
         self.tabs.setTabText(self.tabs.indexOf(self.Quality), _translate("CSVgenerator", "Verdubbelaar"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    CSVgenerator = QtWidgets.QMainWindow()
+    ui = Ui_CSVgenerator()
+    ui.setupUi(CSVgenerator)
+    CSVgenerator.show()
+    sys.exit(app.exec_())

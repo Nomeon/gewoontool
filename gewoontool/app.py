@@ -70,6 +70,7 @@ class CSVProcess(QThread):
         vmgChecked: bool,
         erpChecked: bool,
         cassettes: bool,
+        ws198Checked: bool
     ) -> None:
         super().__init__()
         self.ifc_path = ifc_path
@@ -86,6 +87,7 @@ class CSVProcess(QThread):
         self.vmgChecked = vmgChecked
         self.erpChecked = erpChecked
         self.cassettes = cassettes
+        self.ws198Checked = ws198Checked
 
     def run(self):
         """Executes the IFC to CSV conversion process.
@@ -175,6 +177,9 @@ class CSVProcess(QThread):
                 df_bn = df[df["Bouwnummer"] == bn]
                 if self.erpChecked:
                     partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
+
+                if self.ws198Checked:
+                    partijen.WS198(df=df_bn, path=self.csv_path)
 
                 # Normaal-Normaal
                 if self.bbChecked:
@@ -703,6 +708,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
             vmgChecked=self.vmg_check.isChecked(),
             erpChecked=self.erp_check.isChecked(),
             cassettes=cassettes,
+            ws198Checked=self.ws198_check.isChecked(),
         )
 
         self.calc.csvProgress.connect(self.updateCsvProgress)

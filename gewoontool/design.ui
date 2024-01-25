@@ -643,6 +643,13 @@
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QCheckBox" name="ws198_check">
+                <property name="text">
+                 <string>Extra lijst WS198</string>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </item>

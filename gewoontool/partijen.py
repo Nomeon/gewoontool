@@ -267,42 +267,6 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         if not df_bulk.empty:
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK-CASSETTES.csv", index=False, sep=";")
 
-    # if bulk:
-    #     df_bulk = df[df["Productcode"].isin(bulk_file)]
-    #     df_bulk["Nesting Prioriteit"] = 0
-    #     if not df_bulk.empty:
-    #         df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
-
-    # else:
-    #     df = df[~df["Productcode"].isin(bulk_file)]
-    #     mask = (
-    #         (df["Materiaal vH"] == "LVLS")
-    #         & (df["Dikte vH"] == 45)
-    #         & df["Station"].isin(["WS05", "WS114"])
-    #     )
-
-    #     df_rest = df[~mask]
-    #     df_binnenwand = df[mask]
-    #     df_binnenwand["InkooporderNr"] += "-BW"
-        
-    #     df_vh = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
-
-    #     if cassettes:
-    #         df_vh = df_vh[~df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
-    #         df_cass = df_vh[df_vh["Station"].isin(["WS101", "WS102", "WS103"])]
-    #         if not df_cass.empty:
-    #             df_cass.to_csv(
-    #                 f"{path}/{ordernummer}-{bouwnummer}-{project}-{bouwnummer_kort}-VH-CASSETTES.csv",
-    #                 index=False,
-    #                 sep=";",
-    #             )
-
-    #     df_vh.to_csv(
-    #         f"{path}/{ordernummer}-{bouwnummer}-{project}-{bouwnummer_kort}-VH.csv",
-    #         index=False,
-    #         sep=";",
-    #     )
-
 
 def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bool, cassettes: bool, cass_global: bool) -> None:
     """Gets the VMG parts from the dataframe and saves it to a CSV file.
@@ -368,17 +332,6 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
         df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-CASSETTES-BULK.csv", index=False, sep=";")
-
-    # if cassettes:
-    #     # Filter out WS101, WS102, WS103
-    #     df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
-    #     df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
-    #     if not df_cass.empty:
-    #         df_cass.to_csv(f"{path}/{ordernummer}-{project}-VMG-CASSETTES.csv", index=False, sep=";")
-
-    # df.to_csv(f"{path}/{ordernummer}-{project}-VMG.csv", index=False, sep=";")
-    # if not df_bulk.empty:
-    #     df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VMG-BULK.csv", index=False, sep=";")
 
 
 def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:
@@ -454,3 +407,68 @@ def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:
             df_mod.to_csv(
                 f"{path}/{project}-{bouwnummer}-{mod_label}.csv", index=False, sep=";"
             )
+
+def WS198(df: pd.DataFrame, path: str) -> None:
+    project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
+
+    # Get all products where "Station" is WS198
+    df = df[df["Station"] == "WS198"]
+    if df.empty:
+        return
+    
+    df_unit = df[df["Eenheid"] == "unit"]
+    df_metric = df[df["Eenheid"] != "unit"]
+
+    # Compression on units
+    df_unit = df_unit.sort_values(by=["Name", "Station", "Dikte", "Breedte", "Lengte"])
+    df_unit = df_unit.groupby(
+        ["Productcode", "Name", "Moduletype", "Materiaal", "Station", "Eenheid"],
+        as_index=False,
+    ).agg(
+        dict(
+            map(
+                (lambda x: (x, "first") if x != "Aantal" else (x, "sum")),
+                df_unit.columns.tolist(),
+            )
+        )
+    )
+
+    # Compression on m1, m2
+    df_metric = df_metric.sort_values(
+        by=["Name", "Station", "Dikte", "Breedte", "Lengte"]
+    )
+    df_metric = df_metric.groupby(
+        ["Productcode", "Name", "Moduletype", "Materiaal", "Station", "Eenheid"],
+        as_index=False,
+    ).agg(
+        dict(
+            map(
+                (
+                    lambda x: (x, "sum")
+                    if x == "Aantal"
+                    else ((x, "sum") if x == "Gewicht" else (x, "first"))
+                ),
+                df_metric.columns.tolist(),
+            )
+        )
+    )
+
+    df_merged = pd.concat([df_unit, df_metric], ignore_index=True)
+    df_merged["Name"] = df_merged["Name"].astype("string")
+    df_merged = df_merged.sort_values(by=["Productcode"])
+    df_merged = df_merged.round({"Aantal": 2})
+
+    df_ws198 = df_merged[
+        [
+            "Name",
+            "Productcode",
+            "Aantal",
+            "Eenheid",
+            "Modulenaam",
+            "Breedte",
+            "Lengte",
+            "Dikte",
+        ]
+    ]
+
+    df_ws198.to_excel(f"{path}/{project}-{bouwnummer}-WS198.xlsx", index=False)

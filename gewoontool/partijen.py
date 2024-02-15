@@ -149,8 +149,6 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     df["Bestand"] = (
         "P:\\"
         + str(project)
-        + "\\"
-        + bouwnummer
         + "\\DWG\\"
         + df["Materiaal"]
         + " "
@@ -239,6 +237,9 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     df_binnenwand["InkooporderNr"] += "-BW"
     df = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
 
+    # Convert modulenaam to string:
+    df['Modulenaam'] = df['Modulenaam'].astype(str)
+
     # Normaal-Normaal, bulk = False and casettes = False, BN
     if not bulk and not cassettes:
         df = df[~df["Productcode"].isin(bulk_file)]
@@ -249,6 +250,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     # Normaal-Bulk, bulk = True and casettes = False, BATCH
     elif bulk and not cassettes:
         df_bulk = df[df["Productcode"].isin(bulk_file)]
+        df_bulk['Modulenaam'] = str(project) + "-BULK"
         if cass_global:
             df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
@@ -265,6 +267,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         df_bulk = df[df["Productcode"].isin(bulk_file)]
         df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
+            df_bulk['Modulenaam'] = project + "-BULK"
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK-CASSETTES.csv", index=False, sep=";")
 
 
@@ -281,6 +284,13 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
 
     if df.empty:
         return
+    
+    if not 'BuildingStep' in df.columns:
+        df['Bouwlaag promat'] = ''
+    else:
+        df['Bouwlaag promat'] = df['BuildingStep'].str.split('_').str[1]
+        # Drop the BuildingStep column
+        df.drop('BuildingStep', axis=1, inplace=True)
 
     df["Order"] = ordernummer
     df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)
@@ -290,12 +300,14 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
             "Order",
             "Modulenaam",
             "Station",
+            "Positie",
             "Name",
             "Materiaal",
             "Productcode",
             "Lengte",
             "Breedte",
             "Aantal",
+            "Bouwlaag promat",
         ]
     ]
     df = df.rename(columns={"Name": "Naam"})

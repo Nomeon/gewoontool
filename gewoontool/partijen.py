@@ -267,7 +267,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         df_bulk = df[df["Productcode"].isin(bulk_file)]
         df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
-            df_bulk['Modulenaam'] = project + "-BULK"
+            df_bulk['Modulenaam'] = str(project) + "-BULK"
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK-CASSETTES.csv", index=False, sep=";")
 
 

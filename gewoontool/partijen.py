@@ -300,7 +300,6 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
             "Order",
             "Modulenaam",
             "Station",
-            "Positie",
             "Name",
             "Materiaal",
             "Productcode",

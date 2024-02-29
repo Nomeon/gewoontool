@@ -54,6 +54,8 @@ class CSVProcess(QThread):
     """Progress signal for the progress bar."""
     lcdChanged = pyqtSignal(int)
     """LCD signal for the LCD display."""
+    resetSignal = pyqtSignal(str)
+    """Signal for resetting the process."""
 
     def __init__(        
         self,
@@ -197,43 +199,15 @@ class CSVProcess(QThread):
                 if self.vmgChecked and self.cassettes:
                     partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=True, cass_global=self.cassettes)
 
-            # First, per batch for BB, VMG and VH, only if Bulk is not empty
-            # if self.bbChecked and bulkbb != []:
-            #     bborder = "IO-000000"
-            #     if self.orderBB != "":
-            #         bborder = self.orderBB
-            #     partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=self.cassettes)
-            
-            # if self.vmgChecked and bulkvmg != []:
-            #     vmgorder = "IO-000000"
-            #     if self.orderVMG != "":
-            #         vmgorder = self.orderVMG
-            #     partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=self.cassettes)
-
-            # if self.vhChecked and bulkvh != []:
-            #     vhorder = "IO-000000"
-            #     if self.orderVH != "":
-            #         vhorder = self.orderVH
-            #     partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=self.cassettes)
-
-            # Then, per BN for BB, VMG and VH, 
-            # for bn in bns:
-            #     df_bn = df[df["Bouwnummer"] == bn]
-            #     if self.vhChecked:
-            #         vhorder = "IO-000000"
-            #         if self.orderVH != "":
-            #             vhorder = self.orderVH
-            #         partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=self.cassettes)
-            #     if self.erpChecked:
-            #         partijen.ERP(df=df_bn, path=self.csv_path, bnormt=self.bnormt)
-
             self.messageSignal.emit(f"Klaar met converteren naar CSVs!")
             self.messageSignal.emit(f"De tool kan afgesloten worden.")
+            self.resetSignal.emit("enable")
 
         except Exception as e:
             logging.exception("error:")
             output = f"Er is iets fout gegaan: {e}"
             self.errorSignal.emit(output)
+            self.resetSignal.emit("enable")
 
 
 class IFCProcess(QThread):
@@ -256,6 +230,8 @@ class IFCProcess(QThread):
     """Signal for displaying the IFCs in the viewer."""
     menuSignal = pyqtSignal(str, list, list)
     """Signal for adding the IFCs to the menu."""
+    resetSignal = pyqtSignal(str)
+    """Signal for resetting the process."""
 
     def __init__(self, ifc_path: str, report_loc: str, schroef: bool, dichting: bool) -> None:
         super().__init__()
@@ -353,10 +329,12 @@ class IFCProcess(QThread):
                 os.remove(f"TEMP/{file}")
             os.rmdir("TEMP")
             self.messageSignal.emit("Klaar! De tool kan afgesloten worden.")
+            self.resetSignal.emit("enable")
 
         except FileExistsError as e:
             output = f'De TEMP folder bestond al, maar is nu verwijderd. genereer opnieuw!\n\n Meer informatie: {e}'
             self.errorSignal.emit(output)
+            self.resetSignal.emit("restart")
 
         except Exception as e:
             if os.path.isdir("TEMP"):
@@ -365,6 +343,7 @@ class IFCProcess(QThread):
                 os.rmdir("TEMP")
             output = f"Er is iets fout gegaan: {e}"
             self.errorSignal.emit(output)
+            self.resetSignal.emit("enable")
 
 
     def generate_images(self, df: pd.DataFrame, file: str, shapesA: list) -> None:
@@ -634,6 +613,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.prio_button.clicked.connect(self.get_prio)
         self.bulk_button.clicked.connect(self.get_bulk_csv)
         self.start_button.clicked.connect(self.generate_csv)
+        self.reset_button.clicked.connect(self.reset_csv)
         self.exit_button.clicked.connect(self.exit_app)
 
         # Connect buttons - Report
@@ -641,6 +621,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.report_button.clicked.connect(self.get_report)
 
         self.start_button2.clicked.connect(self.generate_report)
+        self.reset_button2.clicked.connect(self.reset_ifc)
         self.exit_button2.clicked.connect(self.exit_app)
 
 
@@ -715,8 +696,34 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.calc.lcdChanged.connect(self.updateLCD)
         self.calc.messageSignal.connect(self.csvSignal)
         self.calc.errorSignal.connect(self.errorSignal)
+        self.calc.resetSignal.connect(self.resetSignal)
         self.calc.start()
         self.start_button.setEnabled(False)
+        self.reset_button.setEnabled(False)
+
+    def reset_csv(self):
+        """Resets the CSV generation process.
+        """        
+        self.progressCSV.setValue(0)
+        self.lcd.setProperty("value", 0)
+        self.ifc_path.setText("")
+        self.csv_path.setText("")
+        self.bulk_path.setText("")
+        self.nesting_path.setText("")
+        self.vh_order.setText("")
+        self.bb_order.setText("")
+        self.vmg_order.setText("")
+        self.status_csv.setText("")
+        self.start_button.setEnabled(True)
+
+    def reset_ifc(self):
+        """Resets the IFC quality check process.
+        """        
+        self.progressIFC.setValue(0)
+        self.ifc_path2.setText("")
+        self.report_path.setText("")
+        self.status_qual.setText("")
+        self.start_button2.setEnabled(True)
 
     def generate_report(self):
         """Starts the report generation process.
@@ -733,9 +740,10 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.check.errorSignal.connect(self.errorSignal)
         self.check.displaySignal.connect(self.displaySignal)
         self.check.menuSignal.connect(self.addMenuItem)
-
+        self.check.resetSignal.connect(self.checkResetSignal)
         self.check.start()
-        # self.start_button2.setEnabled(False)
+        self.start_button2.setEnabled(False)
+        self.reset_button2.setEnabled(False)
 
     def exit_app(self):
         """Removes the TEMP folder and exits the application.
@@ -779,6 +787,34 @@ class App(QMainWindow, design.Ui_CSVgenerator):
             value (str): Message to be added.
         """        
         self.status_csv.append(value)
+
+    def resetSignal(self, value):
+        """Resets the status box.
+
+        Args:
+            value (str): Message to be added.
+        """        
+        if value == "enable":
+            self.reset_button.setEnabled(True)
+
+        if value == "reset":
+            self.reset_csv()
+
+    def checkResetSignal(self, value):
+        """Resets the status box.
+
+        Args:
+            value (str): Message to be added.
+        """        
+        if value == "enable":
+            self.reset_button2.setEnabled(True)
+
+        if value == "restart":
+            self.reset_button2.setEnabled(True)
+            self.start_button2.setEnabled(True)
+
+        if value == "reset":
+            self.reset_ifc()
 
     def ifcSignal(self, value):
         """Adds a message to the IFC status box.

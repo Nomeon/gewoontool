@@ -234,7 +234,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
 
     df_rest = df[~mask]
     df_binnenwand = df[mask]
-    df_binnenwand["InkooporderNr"] += "-BW"
+    df_binnenwand["Order"] += "-BW"
     df = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
 
     # Convert modulenaam to string:

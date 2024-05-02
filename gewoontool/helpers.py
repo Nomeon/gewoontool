@@ -81,14 +81,15 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
                 continue
 
     df = pd.DataFrame(rows)
+    
+    if not 'Buildinstep' in df.columns:
+        df['Buildingstep'] = ''
+
     columns_to_keep = ['Klant', 'Projectnummer', 'Bouwnummer', 'Moduletype',
             'Modulenaam', 'IFC bestand', 'Productcode', 'Name',
             'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht',
             'Materiaal', 'Station', 'Aantal', 'Eenheid',
-            'Shape']
-
-    if 'BuildingStep' in df.columns:
-        columns_to_keep.append('BuildingStep')
+            'Shape', 'Buildingstep']
 
     df = df[columns_to_keep]
     df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]] = df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]].apply(pd.to_numeric)

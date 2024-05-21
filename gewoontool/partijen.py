@@ -286,7 +286,6 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
     if df.empty:
         return
     
-    
     df["Nesting Prioriteit"] = df["Moduletype"]
     df["Prio"] = df["Modulenaam"] + "-" + df["Station"]
     for key, value in prio_dict.items():
@@ -418,9 +417,9 @@ def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:
 
     df_merged["IFC-bestand"] = df_merged["IFC-bestand"].str.replace(" ", "_")
     
-    if 'Buildingstep' in df.columns:
-        # Remove the Buildingstep column
-        df_merged.drop('Buildingstep', axis=1, inplace=True)
+    if 'BuildingStep' in df.columns:
+        # Remove the BuildingStep column
+        df_merged.drop('BuildingStep', axis=1, inplace=True)
     
     if bnormt:
         df_merged.to_csv(f"{path}/{project}-{bouwnummer}-ERP.csv", index=False, sep=";")

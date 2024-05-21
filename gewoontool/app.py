@@ -165,7 +165,7 @@ class CSVProcess(QThread):
             if self.vhChecked and bulkvh != []:
                 partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=False, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != []:
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=False, cass_global=self.cassettes)
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=True, cassettes=False, cass_global=self.cassettes)
 
             # Cas-BULK
             if self.bbChecked and bulkbb != [] and self.cassettes:
@@ -173,7 +173,7 @@ class CSVProcess(QThread):
             if self.vhChecked and bulkvh != [] and self.cassettes:
                 partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=True, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != [] and self.cassettes:
-                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=True, cassettes=True, cass_global=self.cassettes)
+                partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=True, cassettes=True, cass_global=self.cassettes)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
@@ -189,7 +189,7 @@ class CSVProcess(QThread):
                 if self.vhChecked:
                     partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=False, cass_global=self.cassettes)
                 if self.vmgChecked:
-                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=False, cass_global=self.cassettes)
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=False, cassettes=False, cass_global=self.cassettes)
 
                 # Cas-Normaal
                 if self.bbChecked and self.cassettes:
@@ -197,7 +197,7 @@ class CSVProcess(QThread):
                 if self.vhChecked and self.cassettes:
                     partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=True, cass_global=self.cassettes)
                 if self.vmgChecked and self.cassettes:
-                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, bulk_file=bulkvmg, bulk=False, cassettes=True, cass_global=self.cassettes)
+                    partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=False, cassettes=True, cass_global=self.cassettes)
 
             self.messageSignal.emit(f"Klaar met converteren naar CSVs!")
             self.messageSignal.emit(f"De tool kan afgesloten worden.")
@@ -586,7 +586,8 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.tabs.setCurrentIndex(1)
 
         # Create ifc viewer
-        load_backend("qt-pyqt5")
+        # load_backend("qt-pyqt5")
+        load_backend("pyqt5")
         from OCC.Display.qtDisplay import qtViewer3d
 
         self.shapeTuples = []

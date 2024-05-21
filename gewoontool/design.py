@@ -698,7 +698,7 @@ class Ui_CSVgenerator(object):
 
     def retranslateUi(self, CSVgenerator):
         _translate = QtCore.QCoreApplication.translate
-        CSVgenerator.setWindowTitle(_translate("CSVgenerator", "geWOONhout"))
+        CSVgenerator.setWindowTitle(_translate("CSVgenerator", "geWOONtool 1.2.4"))
         self.csv_label.setText(_translate("CSVgenerator", "Waar moeten de CSVs naartoe?"))
         self.ifc_label.setText(_translate("CSVgenerator", "Waar staan de IFCs?"))
         self.vmg_label.setText(_translate("CSVgenerator", "VMG ordernummer"))

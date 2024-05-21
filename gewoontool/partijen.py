@@ -271,13 +271,14 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK-CASSETTES.csv", index=False, sep=";")
 
 
-def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bool, cassettes: bool, cass_global: bool) -> None:
+def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, bulk: bool, cassettes: bool, cass_global: bool) -> None:
     """Gets the VMG parts from the dataframe and saves it to a CSV file.
 
     Args:
         df (pd.DataFrame): The dataframe with all the parts.
         ordernummer (str): The ordernumber of the project.
         path (str): The path to save the CSV file.
+        prio_dict (dict): The dictionary with the priority of the modules.
     """
     project, bouwnummer = df["Projectnummer"].iloc[0], df["Bouwnummer"].iloc[0]
     df = df[df["Materiaal"].str.contains("PRO")]
@@ -285,6 +286,13 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
     if df.empty:
         return
     
+    
+    df["Nesting Prioriteit"] = df["Moduletype"]
+    df["Prio"] = df["Modulenaam"] + "-" + df["Station"]
+    for key, value in prio_dict.items():
+        df.loc[df["Prio"].str.contains(key), "Nesting Prioriteit"] = value
+    
+
     if not 'BuildingStep' in df.columns:
         df['Bouwlaag promat'] = ''
     else:
@@ -307,6 +315,7 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, bulk_file: list, bulk: bo
             "Breedte",
             "Aantal",
             "Bouwlaag promat",
+            "Nesting Prioriteit",
         ]
     ]
     df = df.rename(columns={"Name": "Naam"})
@@ -408,6 +417,10 @@ def ERP(df: pd.DataFrame, path: str, bnormt: bool) -> None:
     )
 
     df_merged["IFC-bestand"] = df_merged["IFC-bestand"].str.replace(" ", "_")
+    
+    if 'Buildingstep' in df.columns:
+        # Remove the Buildingstep column
+        df_merged.drop('Buildingstep', axis=1, inplace=True)
     
     if bnormt:
         df_merged.to_csv(f"{path}/{project}-{bouwnummer}-ERP.csv", index=False, sep=";")

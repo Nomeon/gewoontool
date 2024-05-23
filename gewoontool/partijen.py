@@ -298,6 +298,8 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
         df['Bouwlaag promat'] = df['BuildingStep'].str.split('_').str[1]
         # Drop the BuildingStep column
         df.drop('BuildingStep', axis=1, inplace=True)
+        bouwlaag_dict = helpers.bouwlaag_translation()
+        df['Bouwlaag promat'] = df['Bouwlaag promat'].replace(bouwlaag_dict)
 
     df["Order"] = ordernummer
     df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)

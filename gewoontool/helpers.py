@@ -317,3 +317,33 @@ def combine_html() -> None:
     
     with open('TEMP/combined.html', 'w') as f:
         f.write(combined_html)
+
+def bouwlaag_translation() -> dict:
+    """Gives the dictionary to shorten the description of bouwlaag.
+
+    Returns:
+        dict: A dictionary with the translations.
+    """
+    bouwlaag_dict = {
+        "Binnenwand - Beplating - Zijde 1": "BW - 1",
+        "Gevel - Afwerking - Binnenzijde en Dagkant": "G - Dagkant",
+        "Gevel - Beplating - Binnenzijde": "G - Binnenzijde",
+        "Gevel - Installaties, Luchtdichting en Brandwerende Voorzieningen": "G - Inst, LD, BV",
+        "Overig - Op Locatie": "O - Op locatie",
+        "Plafond - Hoofdbalk Gevel 1e laag": "PL - HBG - 1",
+        "Plafond - Hoofdbalk Gevel 2e laag": "PL - HBG - 2",
+        "Plafond - Hoofdbalk Gevel 3e laag": "PL - HBG - 3",
+        "Plafond - Hoofdbalk Woningscheiding 1e laag": "PL - HBW - 1",
+        "Plafond - Hoofdbalk Woningscheiding 2e laag": "PL - HBW - 2",
+        "Plafond - Randbalk Connectie 1e laag": "PL - RBC - 1",
+        "Plafond - Randbalk Connectie 2e laag": "PL - RBC - 2",
+        "Plafond - Randbalk Connectie 3e laag": "PL - RBC - 3",
+        "Plafond - Randbalk Gevel 1e laag": "PL - RBG - 1",
+        "Plafond - Randbalk Gevel 2e laag": "PL - RBG - 2",
+        "Plafond - Randbalk Gevel 3e laag": "PL - RBG - 3",
+        "Plafond en Plat Dak - Installaties en Brandwerende Voorzieningen": "PL + DAK - Inst",
+        "Vloer - Installaties en Brandwerende Voorzieningen": "VL - Inst",
+        "Vloer - Randbalk Connectie 1e laag": "VL - RBC - 1",
+        "Woningscheidende wand - Installaties en Brandwerende Voorzieningen": "WSW - Inst",
+    }
+    return bouwlaag_dict

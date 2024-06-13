@@ -345,5 +345,10 @@ def bouwlaag_translation() -> dict:
         "Vloer - Installaties en Brandwerende Voorzieningen": "VL - Inst",
         "Vloer - Randbalk Connectie 1e laag": "VL - RBC - 1",
         "Woningscheidende wand - Installaties en Brandwerende Voorzieningen": "WSW - Inst",
+        "Plafond - Randbalk Woningscheiding 1e laag": "PL - RBW - 1",
+        "Vloer - Randbalk Gevel 3e laag": "VL - RBG - 3",
+        "Vloer - Randbalk Gevel 1e laag": "VL - RBG - 1",
+        "Vloer - Randbalk Gevel 2e laag": "VL - RBG - 2",
+        "Plafond - Randbalk Woningscheiding 2e laag": "PL - RBW - 2"
     }
     return bouwlaag_dict

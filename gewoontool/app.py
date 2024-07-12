@@ -14,6 +14,7 @@ if sys.platform == 'win32':
 import itertools
 import pandas as pd
 import ifcopenshell
+import ifcopenshell.util.element
 from multiprocessing import freeze_support, Pool, cpu_count
 from functools import partial
 from OCC.Display.backend import load_backend
@@ -63,6 +64,7 @@ class CSVProcess(QThread):
         csv_path: str,
         vh_nesting: str,
         bulk_path: str,
+        meterkast_path: str,
         orderVH: str,
         orderBB: str,
         orderVMG: str,
@@ -79,6 +81,7 @@ class CSVProcess(QThread):
         self.ifc_list = helpers.get_ifc_list(self.ifc_path)
         self.csv_path = csv_path
         self.bulk_path = bulk_path
+        self.meterkast_path = meterkast_path
         self.vh_nesting = vh_nesting
         self.orderVH = orderVH
         self.orderBB = orderBB
@@ -126,6 +129,14 @@ class CSVProcess(QThread):
                 self.messageSignal.emit("Geen bulk CSV gevonden.")
                 bulkbb, bulkvh, bulkvmg = [], [], []
 
+            try:
+                meterkast = pd.read_csv(self.meterkast_path)
+                self.messageSignal.emit("Meterkast CSV gevonden.")
+                meterkast = meterkast["Meterkast"].tolist()
+            except FileNotFoundError:
+                self.messageSignal.emit("Geen meterkast CSV gevonden.")
+                meterkast = []
+
             if self.csv_path == "":
                 raise ValueError("Geen CSV locatie geselecteerd.")
             
@@ -163,7 +174,7 @@ class CSVProcess(QThread):
             if self.bbChecked and bulkbb != []:
                 partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=False, cass_global=self.cassettes)
             if self.vhChecked and bulkvh != []:
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=False, cass_global=self.cassettes)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=True, cassettes=False, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != []:
                 partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=True, cassettes=False, cass_global=self.cassettes)
 
@@ -171,7 +182,7 @@ class CSVProcess(QThread):
             if self.bbChecked and bulkbb != [] and self.cassettes:
                 partijen.BB(df=df, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=True, cassettes=True, cass_global=self.cassettes)
             if self.vhChecked and bulkvh != [] and self.cassettes:
-                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=True, cassettes=True, cass_global=self.cassettes)
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=True, cassettes=True, cass_global=self.cassettes)
             if self.vmgChecked and bulkvmg != [] and self.cassettes:
                 partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=True, cassettes=True, cass_global=self.cassettes)
 
@@ -187,7 +198,7 @@ class CSVProcess(QThread):
                 if self.bbChecked:
                     partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=False, cass_global=self.cassettes)
                 if self.vhChecked:
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=False, cass_global=self.cassettes)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=False, cassettes=False, cass_global=self.cassettes)
                 if self.vmgChecked:
                     partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=False, cassettes=False, cass_global=self.cassettes)
 
@@ -195,7 +206,7 @@ class CSVProcess(QThread):
                 if self.bbChecked and self.cassettes:
                     partijen.BB(df=df_bn, ordernummer=bborder, path=self.csv_path, prio_dict=prio, bulk_file=bulkbb, bulk=False, cassettes=True, cass_global=self.cassettes)
                 if self.vhChecked and self.cassettes:
-                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, bulk=False, cassettes=True, cass_global=self.cassettes)
+                    partijen.VH(df=df_bn, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=False, cassettes=True, cass_global=self.cassettes)
                 if self.vmgChecked and self.cassettes:
                     partijen.VMG(df=df_bn, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=False, cassettes=True, cass_global=self.cassettes)
 
@@ -613,6 +624,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.csv_button.clicked.connect(self.get_csv)
         self.prio_button.clicked.connect(self.get_prio)
         self.bulk_button.clicked.connect(self.get_bulk_csv)
+        self.meterkast_button.clicked.connect(self.get_meterkast_csv)
         self.start_button.clicked.connect(self.generate_csv)
         self.reset_button.clicked.connect(self.reset_csv)
         self.exit_button.clicked.connect(self.exit_app)
@@ -655,6 +667,14 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         )
         self.bulk_path.setText(file[0])
 
+    def get_meterkast_csv(self):
+        """Gets the meterkast CSV for the CSV generation process.
+        """
+        file = QFileDialog.getOpenFileName(
+            self, "Selecteer de CSV voor de meterkast."
+        )
+        self.meterkast_path.setText(file[0])
+
     def get_ifc_report(self):
         """Gets the IFC directory for the report generation process.
         """        
@@ -680,6 +700,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
             ifc_path=self.ifc_path.text(),
             csv_path=self.csv_path.text(),
             bulk_path=self.bulk_path.text(),
+            meterkast_path=self.meterkast_path.text(),
             vh_nesting=self.nesting_path.text(),
             orderVH=self.vh_order.text(),
             orderBB=self.bb_order.text(),
@@ -710,6 +731,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.ifc_path.setText("")
         self.csv_path.setText("")
         self.bulk_path.setText("")
+        self.meterkast_path.setText("")
         self.nesting_path.setText("")
         self.vh_order.setText("")
         self.bb_order.setText("")

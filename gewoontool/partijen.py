@@ -89,28 +89,8 @@ def BB(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         if not df_bulk.empty:
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK-CASSETTES.csv", index=False, sep=";")
 
-    # # Split for bulk
-    # if bulk:
-    #     df_bulk = df[df["Productcode"].isin(bulk_file)]
-    #     df = df[~df["Productcode"].isin(bulk_file)]
-    #     if not df_bulk.empty:
-    #         df_bulk.to_csv(f"{path}/{ordernummer}-{project}-BB-BULK.csv", index=False, sep=",")
 
-    # if cassettes:
-    #     # Filter out WS101, WS102, WS103
-    #     df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
-    #     df_cass = df[df["Station"].isin(["WS101", "WS102", "WS103"])]
-    #     if not df_cass.empty:
-    #         df_cass.to_csv(
-    #             f"{path}/{ordernummer}-{project}-BB-CASSETTES.csv",
-    #             index=False,
-    #             sep=",",
-    #         )
-
-    # df.to_csv(f"{path}/{ordernummer}-{project}-BB.csv", index=False, sep=",")
-
-
-def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, bulk: bool, cassettes: bool, cass_global: bool) -> None:
+def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list,  meterkast_file: list, bulk: bool, cassettes: bool, cass_global: bool) -> None:
     """Gets the Van Hulst parts from the dataframe and saves it to a CSV file.
 
     Args:
@@ -239,6 +219,13 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
 
     # Convert modulenaam to string:
     df['Modulenaam'] = df['Modulenaam'].astype(str)
+
+    # Meterkast CSV
+    #! CHECK IF THIS HAS TO BE PER BOUWNUMMER OR PER PROJECT   
+    df_meterkast = df[df["Productcode"].isin(meterkast_file)]
+    df = df[~df["Productcode"].isin(meterkast_file)]
+    if not df_meterkast.empty:
+        df_meterkast.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VH-METERKAST.csv", index=False, sep=";")
 
     # Normaal-Normaal, bulk = False and casettes = False, BN
     if not bulk and not cassettes:

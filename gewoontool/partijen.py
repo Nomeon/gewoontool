@@ -301,6 +301,7 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
             "Productcode",
             "Lengte",
             "Breedte",
+            "Dikte",
             "Aantal",
             "Bouwlaag promat",
             "Nesting Prioriteit",

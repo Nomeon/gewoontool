@@ -163,6 +163,10 @@ class CSVProcess(QThread):
             bns = df["Bouwnummer"].unique()
             prio = helpers.create_nesting(combined_df=df, prioriteit=prioriteit)
 
+            # VH Meterkast CSV:
+            if self.vhChecked and meterkast != []:
+                partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=False, cassettes=False, cass_global=self.cassettes, meterkast=True)
+
             # Normaal:
             #     Normaal-Normaal op BN (inc prio)
             #     Normaal-BULK	per Batch

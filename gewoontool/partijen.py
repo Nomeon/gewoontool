@@ -278,15 +278,19 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
     for key, value in prio_dict.items():
         df.loc[df["Prio"].str.contains(key), "Nesting Prioriteit"] = value
     
+    df['Bouwlaag promat'] = ''
 
-    if not 'BuildingStep' in df.columns:
-        df['Bouwlaag promat'] = ''
-    else:
-        df['Bouwlaag promat'] = df['BuildingStep'].str.split('_').str[1]
-        # Drop the BuildingStep column
-        df.drop('BuildingStep', axis=1, inplace=True)
-        bouwlaag_dict = helpers.bouwlaag_translation()
-        df['Bouwlaag promat'] = df['Bouwlaag promat'].replace(bouwlaag_dict)
+    # If BuildingStep row is not empty, split the string and get the bouwlaag
+    for index, row in df.iterrows():
+        if row['BuildingStep'] == '':
+            continue
+        df.at[index, 'Bouwlaag promat'] = row['BuildingStep'].split('_')[1]
+
+        # df['Bouwlaag promat'] = df['BuildingStep'].str.split('_').str[1]
+    # Drop the BuildingStep column
+    df.drop('BuildingStep', axis=1, inplace=True)
+    bouwlaag_dict = helpers.bouwlaag_translation()
+    df['Bouwlaag promat'] = df['Bouwlaag promat'].replace(bouwlaag_dict)
 
     df["Order"] = ordernummer
     df["Dikte"] = df["Name"].apply(lambda x: helpers.get_dikte(x)).astype(int)

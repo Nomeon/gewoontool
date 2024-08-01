@@ -23,7 +23,7 @@ from PyQt5.QtCore import QCoreApplication, QThread, pyqtSignal
 from PyQt5.QtGui import QIcon
 from OCC.Core.Graphic3d import Graphic3d_NOM_TRANSPARENT, Graphic3d_NOM_GOLD
 from OCC.Core.Bnd import Bnd_Box
-from OCC.Core.BRepBndLib import brepbndlib_AddOptimal
+from OCC.Core.BRepBndLib import brepbndlib
 
 import helpers
 import partijen
@@ -580,7 +580,7 @@ class IFCProcess(QThread):
             tuple: The coordinates of the bounding box.
         """
         bbox = Bnd_Box()
-        brepbndlib_AddOptimal(shape, bbox, False)
+        brepbndlib.AddOptimal(shape, bbox, False)
         coordinates = bbox.Get()
         return coordinates
 
@@ -601,8 +601,8 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.tabs.setCurrentIndex(1)
 
         # Create ifc viewer
-        load_backend("qt-pyqt5")
-        # load_backend("pyqt5")
+        # load_backend("qt-pyqt5")
+        load_backend("pyqt5")
         from OCC.Display.qtDisplay import qtViewer3d
 
         self.shapeTuples = []

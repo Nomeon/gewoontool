@@ -284,7 +284,7 @@ def html_to_pdf(path: str, werknr: str) -> None:
     current_date = datetime.datetime.now()
     date = current_date.strftime("%d-%m-%Y")
     WKHTML_PATH = 'I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf/bin/wkhtmltopdf.exe'
-    # WKHTML_PATH = 'C:/Users/Stijn/Desktop/wkhtml/wkhtmltopdf/bin/wkhtmltopdf.exe'
+    # WKHTML_PATH = 'C:/Users/nomeon/Desktop/Projects/wkhtmltopdf/bin/wkhtmltopdf.exe'
     options = {
         'page-size' : 'A4',
         'dpi' : 400,

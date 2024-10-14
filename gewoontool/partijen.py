@@ -205,6 +205,9 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         }
     )
 
+    # Add WS to order number if Spano
+    df.loc[df['Order'].str.contains('SPANO', na=False), 'Order'] = df['Order'] + '-' + df['Station']
+
     # Add -BW to the order number for binnenwanden, checken of dit mag voor alles.
     mask = (
         (df["Materiaal vH"] == "LVLS")

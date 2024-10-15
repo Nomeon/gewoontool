@@ -224,7 +224,6 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     df['Modulenaam'] = df['Modulenaam'].astype(str)
 
     # Meterkast CSV
-    #! CHECK IF THIS HAS TO BE PER BOUWNUMMER OR PER PROJECT   
     df_meterkast = df[df["Productcode"].isin(meterkast_file)]
     df = df[~df["Productcode"].isin(meterkast_file)]
     if not df_meterkast.empty and meterkast:
@@ -244,6 +243,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         if cass_global:
             df = df[~df["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
+            df_bulk = helpers.custom_groupby(df_bulk, ["Order", "OnderdeelNaam", "Productcode"], ["AantalvH"])
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
 
     # Cas-Normaal, bulk = False and casettes = True, BN
@@ -258,6 +258,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         df_bulk = df_bulk[df_bulk["Station"].isin(["WS101", "WS102", "WS103"])]
         if not df_bulk.empty:
             df_bulk['Modulenaam'] = str(project) + "-BULK"
+            df_bulk = helpers.custom_groupby(df_bulk, ["Order", "OnderdeelNaam", "Productcode"], ["AantalvH"])
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK-CASSETTES.csv", index=False, sep=";")
 
 

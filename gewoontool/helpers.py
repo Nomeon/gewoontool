@@ -356,3 +356,31 @@ def bouwlaag_translation() -> dict:
         "Woningscheidende wand - Installaties en Brandwerende Voorzieningen": "WSW - Inst",
     }
     return bouwlaag_dict
+
+
+def custom_groupby(df, groupby_cols, sum_cols):
+    """Custom groupby function for pandas.
+
+    Args:
+        df (pd.DataFrame): The dataframe.
+        groupby_cols (list): The columns to group by.
+        sum_cols (list): The columns to sum.
+
+    Returns:
+        pd.DataFrame: The grouped dataframe.
+    """
+    # Save original order of columns
+    columns = df.columns.tolist()
+    agg_dict = {}
+
+    for col in sum_cols:
+        agg_dict[col] = 'sum'
+
+    for col in df.columns:
+        if col not in sum_cols and col not in groupby_cols:
+            agg_dict[col] = 'first'
+
+    df_grouped = df.groupby(groupby_cols, as_index=False).agg(agg_dict)
+    df_grouped = df_grouped[columns]
+
+    return df_grouped

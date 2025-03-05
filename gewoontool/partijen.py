@@ -220,6 +220,18 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     df_binnenwand["Order"] += "-BW"
     df = pd.concat([df_rest, df_binnenwand], ignore_index=True, sort=False)
 
+    # Separate mask for Vloerplaten, LVLQ 33, WS107, to separate CSV file with VP in the name
+    mask_vp = (
+        (df["Materiaal vH"] == "LVLQ")
+        & (df["Dikte vH"] == 33)
+        & df["Station"].isin(["WS107"])
+    )
+
+    df_vp = df[mask_vp]
+    df = df[~mask_vp]
+    if not df_vp.empty:
+        df_vp.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VP-VH.csv", index=False, sep=";")
+
     # Convert modulenaam to string:
     df['Modulenaam'] = df['Modulenaam'].astype(str)
 

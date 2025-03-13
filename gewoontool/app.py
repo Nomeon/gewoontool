@@ -601,8 +601,8 @@ class App(QMainWindow, design.Ui_CSVgenerator):
         self.tabs.setCurrentIndex(1)
 
         # Create ifc viewer
-        # load_backend("qt-pyqt5") #laptop
-        load_backend("pyqt5") #desktop/prod
+        load_backend("qt-pyqt5") #laptop
+        # load_backend("pyqt5") #desktop/prod
         from OCC.Display.qtDisplay import qtViewer3d
 
         self.shapeTuples = []

@@ -144,7 +144,11 @@ def get_dikte(column: str) -> int:
     Returns:
         int: The dikte.
     """
-    value = int(re.search(r"\d+", column).group())
+    match = re.search(r"\d+", column)
+    if match is None:
+        print(f"Warning: No digits found in column name: '{column}'")
+        return 0
+    value = int(match.group())
     return value
 
 

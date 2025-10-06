@@ -222,6 +222,57 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
     else:
         df = df[~df["Productcode"].isin(bulk_file)]
+
+        """         
+        # Add installatieklossen?
+        installatieklos_klein = pd.DataFrame({
+            "KlantvH": "",
+            "Order": "",
+            "InkooporderNr": "",
+            "Configuratie": "",
+            "Setup": "",
+            "Materiaal vH": "LVLS",
+            "Dikte vH": 45,
+            "Bestand": "",
+            "OnderdeelNaam": "Klos Klein",
+            "AantalvH": 20,
+            "Nesten": None,
+            "Nest Rotatie Methode": None,
+            "Nest Rotatie": None,
+            "Nesting Prioriteit": None,
+            "Nest Setnr": 1,
+            "Station": "WS105",
+            "Productcode": "GWH-STD-0187",
+            "Modulenaam": "",
+            "Barcode": ""
+        }, index=[0])
+        
+        installatieklos_groot = pd.DataFrame({
+            "KlantvH": "",
+            "Order": "",
+            "InkooporderNr": "",
+            "Configuratie": "",
+            "Setup": "",
+            "Materiaal vH": "LVLS",
+            "Dikte vH": 45,
+            "Bestand": "",
+            "OnderdeelNaam": "Klos Groot",
+            "AantalvH": 20,
+            "Nesten": None,
+            "Nest Rotatie Methode": None,
+            "Nest Rotatie": None,
+            "Nesting Prioriteit": None,
+            "Nest Setnr": 1,
+            "Station": "WS105",
+            "Productcode": "GWH-STD-0188",
+            "Modulenaam": "",
+            "Barcode": ""
+        }, index=[0])
+        
+        # Add both to the dataframe
+        df = pd.concat([df, installatieklos_klein, installatieklos_groot], ignore_index=True)
+        
+        """
         
         # Split it on deel 1 and deel 2 based on the following rules:
         # - up to and including WS106 -> deel 1

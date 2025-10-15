@@ -10,6 +10,7 @@ dependencies:
   - pythonocc-core
   - pip
   - pyinstaller
+  - openpyxl
   - pip:
     - ifcopenshell
     - Jinja2

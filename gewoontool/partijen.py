@@ -215,7 +215,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
         df_meterkast.to_csv(f"{path}/{ordernummer}-{project}-VH-METERKAST.csv", index=False, sep=";")
         
     if bulk:
-        df_bulk = df[~df["Productcode"].isin(bulk_file)]
+        df_bulk = df[df["Productcode"].isin(bulk_file)]
         df_bulk["Modulenaam"] = str(project) + "-BULK"
         if not df_bulk.empty:
             df_bulk = helpers.custom_groupby(df_bulk, ["Order", "OnderdeelNaam", "Productcode"], ["AantalvH"])
@@ -496,4 +496,5 @@ def WS198(df: pd.DataFrame, path: str) -> None:
         ]
     ]
 
-    df_ws198.to_excel(f"{path}/{project}-{bouwnummer}-WS198.xlsx", index=False)
+    # df_ws198.to_excel(f"{path}/{project}-{bouwnummer}-WS198.xlsx", index=False)
+    df_ws198.to_csv(f"{path}/{project}-{bouwnummer}-WS198.csv", index=False, sep=";")

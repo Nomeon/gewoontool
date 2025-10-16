@@ -222,57 +222,6 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
             df_bulk.to_csv(f"{path}/{ordernummer}-{project}-VH-BULK.csv", index=False, sep=";")
     else:
         df = df[~df["Productcode"].isin(bulk_file)]
-
-        """         
-        # Add installatieklossen?
-        installatieklos_klein = pd.DataFrame({
-            "KlantvH": "",
-            "Order": "",
-            "InkooporderNr": "",
-            "Configuratie": "",
-            "Setup": "",
-            "Materiaal vH": "LVLS",
-            "Dikte vH": 45,
-            "Bestand": "",
-            "OnderdeelNaam": "Klos Klein",
-            "AantalvH": 20,
-            "Nesten": None,
-            "Nest Rotatie Methode": None,
-            "Nest Rotatie": None,
-            "Nesting Prioriteit": None,
-            "Nest Setnr": 1,
-            "Station": "WS105",
-            "Productcode": "GWH-STD-0187",
-            "Modulenaam": "",
-            "Barcode": ""
-        }, index=[0])
-        
-        installatieklos_groot = pd.DataFrame({
-            "KlantvH": "",
-            "Order": "",
-            "InkooporderNr": "",
-            "Configuratie": "",
-            "Setup": "",
-            "Materiaal vH": "LVLS",
-            "Dikte vH": 45,
-            "Bestand": "",
-            "OnderdeelNaam": "Klos Groot",
-            "AantalvH": 20,
-            "Nesten": None,
-            "Nest Rotatie Methode": None,
-            "Nest Rotatie": None,
-            "Nesting Prioriteit": None,
-            "Nest Setnr": 1,
-            "Station": "WS105",
-            "Productcode": "GWH-STD-0188",
-            "Modulenaam": "",
-            "Barcode": ""
-        }, index=[0])
-        
-        # Add both to the dataframe
-        df = pd.concat([df, installatieklos_klein, installatieklos_groot], ignore_index=True)
-        
-        """
         
         # Split it on deel 1 and deel 2 based on the following rules:
         # - up to and including WS106 -> deel 1
@@ -288,8 +237,6 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
             df_deel2 = helpers.custom_groupby(df_deel2, ["Order", "OnderdeelNaam", "Productcode"], ["AantalvH"])
             df_deel2.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VH-2.csv", index=False, sep=";")
         
-        # df.to_csv(f"{path}/{ordernummer}-{project}-{bouwnummer_kort}-VH.csv", index=False, sep=";")
-
 
 def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file: list, bulk: bool) -> None:
     """Gets the VMG parts from the dataframe and saves it to a CSV file.
@@ -496,5 +443,93 @@ def WS198(df: pd.DataFrame, path: str) -> None:
         ]
     ]
 
-    # df_ws198.to_excel(f"{path}/{project}-{bouwnummer}-WS198.xlsx", index=False)
     df_ws198.to_csv(f"{path}/{project}-{bouwnummer}-WS198.csv", index=False, sep=";")
+    
+
+def Houtlijst(df: pd.DataFrame, path: str) -> None:
+    """Gets the Van Hulst & Boerboom parts from the dataframe and saves it to a CSV file. Use the same file structure as ERP.
+
+    Args:
+        df (pd.DataFrame): The dataframe with all the parts.
+        path (str): The path to save the CSV file.
+    """
+    project = df["Projectnummer"].iloc[0]
+
+    # Filter for products that go to Boerboom & Van Hulst (exclude PRO/FERM materials)
+    df = df[~df["Materiaal"].str.contains("PRO|FERM", na=False)]
+
+    if df.empty:
+        return
+
+    # Filter out ERP products (Voorraad = "Ja")
+    df = df[~df["Productcode"].apply(helpers.delete_productcode)]
+
+    if df.empty:
+        return
+
+    # Determine Leverancier (BB or VH) based on product characteristics
+    # BB criteria: LVLQ 90/100/144/69, LVLS 45 (>3360mm), SPANO 18 (>2700mm), or BAUB material
+    bb_mask = (
+        df["Name"].str.contains("LVLQ 90|LVLQ 100|LVLQ 144|LVLQ 69") |
+        ((df["Name"].str.contains("LVLS 45")) & (df["Lengte"] > 3360)) |
+        ((df["Name"].str.contains("SPANO 18")) & (df["Lengte"] > 2700)) |
+        df["Materiaal"].str.contains("BAUB")
+    )
+    df["Leverancier"] = np.where(bb_mask, "BB", "VH")
+
+    df_unit = df[df["Eenheid"] == "unit"]
+    df_metric = df[df["Eenheid"] != "unit"]
+
+    # Compression on units
+    df_unit = df_unit.sort_values(by=["Name", "Station", "Dikte", "Breedte", "Lengte"])
+    df_unit = df_unit.groupby(
+        ["Productcode", "Name", "Moduletype", "Materiaal", "Station", "Eenheid"],
+        as_index=False,
+    ).agg(
+        dict(
+            map(
+                (lambda x: (x, "first") if x != "Aantal" else (x, "sum")),
+                df_unit.columns.tolist(),
+            )
+        )
+    )
+
+    # Compression on m1, m2
+    df_metric = df_metric.sort_values(
+        by=["Name", "Station", "Dikte", "Breedte", "Lengte"]
+    )
+    df_metric = df_metric.groupby(
+        ["Productcode", "Name", "Moduletype", "Materiaal", "Station", "Eenheid"],
+        as_index=False,
+    ).agg(
+        dict(
+            map(
+                (
+                    lambda x: (x, "sum")
+                    if x == "Aantal"
+                    else ((x, "sum") if x == "Gewicht" else (x, "first"))
+                ),
+                df_metric.columns.tolist(),
+            )
+        )
+    )
+
+    df_merged = pd.concat([df_unit, df_metric], ignore_index=True)
+    df_merged["Name"] = df_merged["Name"].astype("string")
+    df_merged = df_merged.sort_values(by=["Name", "Moduletype"])
+    df_merged = df_merged.round({"Aantal": 2, "Gewicht": 3})
+    df_merged = df_merged.rename(
+        columns={
+            "Categorie": "Artikelcategorie",
+            "Name": "Productnaam",
+            "IFC bestand": "IFC-bestand",
+        }
+    )
+
+    df_merged["IFC-bestand"] = df_merged["IFC-bestand"].str.replace(" ", "_")
+
+    if 'BuildingStep' in df_merged.columns:
+        # Remove the BuildingStep column
+        df_merged.drop('BuildingStep', axis=1, inplace=True)
+
+    df_merged.to_csv(f"{path}/{project}-HOUTLIJST.csv", index=False, sep=";")

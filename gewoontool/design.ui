@@ -678,7 +678,7 @@
               </font>
              </property>
              <property name="title">
-              <string>Welke CSVs:</string>
+              <string>Welke CSV's:</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
@@ -743,12 +743,29 @@
                </widget>
               </item>
               <item>
+               <widget class="Line" name="line">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QCheckBox" name="ws198_check">
                 <property name="cursor">
                  <cursorShape>PointingHandCursor</cursorShape>
                 </property>
                 <property name="text">
                  <string>Extra lijst WS198</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="houtlijst_check">
+                <property name="cursor">
+                 <cursorShape>PointingHandCursor</cursorShape>
+                </property>
+                <property name="text">
+                 <string>Extra Houtlijst</string>
                 </property>
                </widget>
               </item>

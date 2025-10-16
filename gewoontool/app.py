@@ -58,7 +58,7 @@ class CSVProcess(QThread):
     resetSignal = pyqtSignal(str)
     """Signal for resetting the process."""
 
-    def __init__(        
+    def __init__(
         self,
         ifc_path: str,
         csv_path: str,
@@ -72,7 +72,8 @@ class CSVProcess(QThread):
         vhChecked: bool,
         vmgChecked: bool,
         erpChecked: bool,
-        ws198Checked: bool
+        ws198Checked: bool,
+        houtlijstChecked: bool
     ) -> None:
         super().__init__()
         self.ifc_path = ifc_path
@@ -89,6 +90,7 @@ class CSVProcess(QThread):
         self.vmgChecked = vmgChecked
         self.erpChecked = erpChecked
         self.ws198Checked = ws198Checked
+        self.houtlijstChecked = houtlijstChecked
 
     def run(self):
         """Executes the IFC to CSV conversion process.
@@ -174,6 +176,10 @@ class CSVProcess(QThread):
                 partijen.VH(df=df, ordernummer=vhorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvh, meterkast_file=meterkast, bulk=True)
             if self.vmgChecked and bulkvmg != []:
                 partijen.VMG(df=df, ordernummer=vmgorder, path=self.csv_path, prio_dict=prio, bulk_file=bulkvmg, bulk=True)
+
+            # Generate Houtlijst for all IFCs combined (not split by BN)
+            if self.houtlijstChecked:
+                partijen.Houtlijst(df=df, path=self.csv_path)
 
             for bn in bns:
                 df_bn = df[df["Bouwnummer"] == bn]
@@ -688,6 +694,7 @@ class App(QMainWindow, design.Ui_CSVgenerator):
             vmgChecked=self.vmg_check.isChecked(),
             erpChecked=self.erp_check.isChecked(),
             ws198Checked=self.ws198_check.isChecked(),
+            houtlijstChecked=self.houtlijst_check.isChecked(),
         )
 
         self.calc.csvProgress.connect(self.updateCsvProgress)

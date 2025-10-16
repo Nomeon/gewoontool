@@ -413,10 +413,19 @@ class Ui_CSVgenerator(object):
         self.vmg_check.setChecked(True)
         self.vmg_check.setObjectName("vmg_check")
         self.verticalLayout_3.addWidget(self.vmg_check)
+        self.line = QtWidgets.QFrame(self.csvs_box)
+        self.line.setFrameShape(QtWidgets.QFrame.HLine)
+        self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
+        self.line.setObjectName("line")
+        self.verticalLayout_3.addWidget(self.line)
         self.ws198_check = QtWidgets.QCheckBox(self.csvs_box)
         self.ws198_check.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.ws198_check.setObjectName("ws198_check")
         self.verticalLayout_3.addWidget(self.ws198_check)
+        self.houtlijst_check = QtWidgets.QCheckBox(self.csvs_box)
+        self.houtlijst_check.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.houtlijst_check.setObjectName("houtlijst_check")
+        self.verticalLayout_3.addWidget(self.houtlijst_check)
         self.optionGrid.addWidget(self.csvs_box)
         self.csvGrid.addWidget(self.option_box, 0, 1, 2, 1)
         self.tabs.addTab(self.CSV, "")
@@ -670,7 +679,7 @@ class Ui_CSVgenerator(object):
 
     def retranslateUi(self, CSVgenerator):
         _translate = QtCore.QCoreApplication.translate
-        CSVgenerator.setWindowTitle(_translate("CSVgenerator", "geWOONtool 1.5.3"))
+        CSVgenerator.setWindowTitle(_translate("CSVgenerator", "geWOONtool 1.6.0"))
         self.bulk_label.setText(_translate("CSVgenerator", "CSV bulk producten"))
         self.ifc_button.setText(_translate("CSVgenerator", "IFC Map"))
         self.ifc_label.setText(_translate("CSVgenerator", "Waar staan de IFCs?"))
@@ -690,12 +699,13 @@ class Ui_CSVgenerator(object):
         self.reset_button.setText(_translate("CSVgenerator", "Reset"))
         self.exit_button.setText(_translate("CSVgenerator", "Exit"))
         self.option_box.setTitle(_translate("CSVgenerator", "Opties"))
-        self.csvs_box.setTitle(_translate("CSVgenerator", "Welke CSVs:"))
+        self.csvs_box.setTitle(_translate("CSVgenerator", "Welke CSV\'s:"))
         self.erp_check.setText(_translate("CSVgenerator", "ERP"))
         self.vh_check.setText(_translate("CSVgenerator", "Van Hulst"))
         self.bb_check.setText(_translate("CSVgenerator", "Boerboom"))
         self.vmg_check.setText(_translate("CSVgenerator", "VMG"))
         self.ws198_check.setText(_translate("CSVgenerator", "Extra lijst WS198"))
+        self.houtlijst_check.setText(_translate("CSVgenerator", "Extra Houtlijst"))
         self.tabs.setTabText(self.tabs.indexOf(self.CSV), _translate("CSVgenerator", "CSV Generator"))
         self.status_box2.setTitle(_translate("CSVgenerator", "Status"))
         self.generate_box2.setTitle(_translate("CSVgenerator", "Genereren"))
@@ -711,3 +721,13 @@ class Ui_CSVgenerator(object):
         self.air_check.setText(_translate("CSVgenerator", "Controleren op luchtdichting?"))
         self.preview_box.setTitle(_translate("CSVgenerator", "Preview"))
         self.tabs.setTabText(self.tabs.indexOf(self.Quality), _translate("CSVgenerator", "Verdubbelaar"))
+
+
+if __name__ == "__main__":
+    import sys
+    app = QtWidgets.QApplication(sys.argv)
+    CSVgenerator = QtWidgets.QMainWindow()
+    ui = Ui_CSVgenerator()
+    ui.setupUi(CSVgenerator)
+    CSVgenerator.show()
+    sys.exit(app.exec_())

@@ -253,6 +253,9 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
     if df.empty:
         return
     
+    # Remove entries with Name that are Gipsplaat (non-case sensitive)
+    df = df[~df["Name"].str.contains("gipsplaat", case=False, na=False)]
+    
     df["Nesting Prioriteit"] = df["Moduletype"]
     df["Prio"] = df["Modulenaam"] + "-" + df["Station"]
     for key, value in prio_dict.items():

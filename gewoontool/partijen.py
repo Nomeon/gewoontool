@@ -188,7 +188,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     )
 
     # Add WS to order number if CEM10, SPANO 10, SPANO 18
-    df.loc[df['Order'].str.contains('CEM10|SPANO 10|SPANO 18', na=False), 'Order'] = df['Order'] + '-' + df['Station']
+    df.loc[df['Order'].str.contains('CEM 10|SPANO 10|SPANO 18', na=False), 'Order'] = df['Order'] + '-' + df['Station']
     
     # Add WS101WS102 to LVLS 45 if station is WS101 or WS102
     df.loc[df['Order'].str.contains('LVLS 45', na=False) & df['Station'].isin(['WS101', 'WS102']), 'Order'] = df['Order'] + '-WS101WS102'
@@ -197,7 +197,7 @@ def VH(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_file
     mask = (
         (df["Materiaal vH"] == "LVLS")
         & (df["Dikte vH"] == 45)
-        & df["Station"].isin(["WS05", "WS114"])
+        & df["Station"].isin(["WS05", "WS114", "WS198"])
     )
 
     df_rest = df[~mask]

@@ -265,9 +265,12 @@ def VMG(df: pd.DataFrame, ordernummer: str, path: str, prio_dict: dict, bulk_fil
     for index, row in df.iterrows():
         if row['BuildingStep'] == '':
             continue
-        df.at[index, 'Bouwlaag promat'] = row['BuildingStep'].split('_')[1]
+          
+        if len(row['BuildingStep'].split('_')) > 1: 
+          df.at[index, 'Bouwlaag promat'] = row['BuildingStep'].split('_')[1]
+        else:
+          df.at[index, 'Bouwlaag promat'] = row['BuildingStep']
 
-        # df['Bouwlaag promat'] = df['BuildingStep'].str.split('_').str[1]
     # Drop the BuildingStep column
     df.drop('BuildingStep', axis=1, inplace=True)
     bouwlaag_dict = helpers.bouwlaag_translation()

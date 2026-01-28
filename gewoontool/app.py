@@ -274,6 +274,27 @@ class IFCProcess(QThread):
             pool = Pool(processes=(cpu_count() - 2))
             for ifc_df in pool.imap(partial(helpers.ifc_to_df, shape=True, schroef=self.schroef, lucht=self.dichting), self.ifc_list):
                 ifc_name = self.ifc_list[prog - 1].split('\\')[-1]
+                if 'RepIsNull' in ifc_df.columns:
+                    rep_null_rows = ifc_df[ifc_df['RepIsNull']].drop_duplicates(subset=['GlobalId', 'Name', 'IfcType'])
+                    for _, row in rep_null_rows.iterrows():
+                        name = row.get('Name', '')
+                        gid = row.get('GlobalId', '')
+                        ifctype = row.get('IfcType', '')
+                        name = '' if pd.isna(name) else str(name)
+                        gid = '' if pd.isna(gid) else str(gid)
+                        ifctype = '' if pd.isna(ifctype) else str(ifctype)
+                        self.messageSignal.emit(f"Verdubbelaar: geen representatie - {name} | {gid} | {ifctype}")
+                    ifc_df = ifc_df[~ifc_df['RepIsNull']].copy()
+                if 'ShapeIsNull' in ifc_df.columns:
+                    null_rows = ifc_df[ifc_df['ShapeIsNull']].drop_duplicates(subset=['GlobalId', 'Name', 'IfcType'])
+                    for _, row in null_rows.iterrows():
+                        name = row.get('Name', '')
+                        gid = row.get('GlobalId', '')
+                        ifctype = row.get('IfcType', '')
+                        name = '' if pd.isna(name) else str(name)
+                        gid = '' if pd.isna(gid) else str(gid)
+                        ifctype = '' if pd.isna(ifctype) else str(ifctype)
+                        self.messageSignal.emit(f"Verdubbelaar: shape is null - {name} | {gid} | {ifctype}")
                 df_errors = pd.DataFrame()
                 df_basic = ifc_df[['Modulenaam', 'Productcode', 'Name', 
                    'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht', 
@@ -532,7 +553,17 @@ class IFCProcess(QThread):
         
         for category in categories:
             df_cat = df[df['Categorie'] == category]
+            if 'ShapeIsNull' in df_cat.columns:
+                df_cat = df_cat[~df_cat['ShapeIsNull']]
+            else:
+                df_cat = df_cat[df_cat['Shape'].notna()]
             for a, b in itertools.combinations(df_cat['Shape'].tolist(), 2):
+                if a is None or b is None:
+                    continue
+                if hasattr(a, "IsNull") and a.IsNull():
+                    continue
+                if hasattr(b, "IsNull") and b.IsNull():
+                    continue
                 bb1 = self.get_boundingbox(a)
                 bb2 = self.get_boundingbox(b)
                 if bb1 == bb2:

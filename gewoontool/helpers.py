@@ -54,27 +54,47 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
     ifc = ifcopenshell.open(file)
     settings = ifcopenshell.geom.settings()
     settings.set(settings.USE_PYTHON_OPENCASCADE, True)
+    create_shape = shape
     for element in ifc.by_type('IfcElement'):
         if ('IfcFastener' in str(element) or 'IfcMechanicalFastener' in str(element)) and (not schroef or not lucht):
             continue
 
         if 'IfcElementAssembly' not in str(element):
-            try:                
-                shape = geom.create_shape(settings, element).geometry if shape else None
+            try:
+                representation_is_null = element.Representation is None
+                if representation_is_null:
+                    print(f'No Representation: {element}')
+                shape_geom = geom.create_shape(settings, element).geometry if (create_shape and not representation_is_null) else None
+                shape_is_null = False
+                if create_shape:
+                    if shape_geom is None:
+                        shape_is_null = True
+                    elif hasattr(shape_geom, "IsNull") and shape_geom.IsNull():
+                        shape_is_null = True
                 elements = ifcopenshell.util.element.get_psets(element)
                 if 'kozijn' in file or 'gevel' in file:
                     name = elements['Identity Data']['Type Mark']
                 else:
                     name = element.get_info()['Name']
-                row = {'Shape': shape, 'Name': name}
+                row = {
+                    'Shape': shape_geom,
+                    'ShapeIsNull': shape_is_null,
+                    'RepIsNull': representation_is_null,
+                    'GlobalId': getattr(element, 'GlobalId', ''),
+                    'IfcType': element.is_a(),
+                    'Name': name,
+                }
                 if ifc.schema == 'IFC2X3':
                     for v in elements.values():
                         if 'Klant' in v.keys():
                             row |= v
                 elif ifc.schema == 'IFC4':
-                    row |= elements['S']
+                    row |= elements.get('S', {})
                 if 'Klant' not in row.keys():
-                    continue
+                    if representation_is_null:
+                        row['Klant'] = ''
+                    else:
+                        continue
                 rows.append(row)
             except KeyError:
                 print(f'KeyError: {element}')
@@ -89,7 +109,7 @@ def ifc_to_df(file: str, shape: bool=False, schroef: bool=True, lucht: bool=True
             'Modulenaam', 'IFC bestand', 'Productcode', 'Name',
             'Categorie', 'Dikte', 'Breedte', 'Lengte', 'Gewicht',
             'Materiaal', 'Station', 'Aantal', 'Eenheid',
-            'Shape', 'BuildingStep']
+            'Shape', 'BuildingStep', 'GlobalId', 'IfcType', 'ShapeIsNull', 'RepIsNull']
 
     df = df[columns_to_keep]
     df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]] = df[["Projectnummer", "Dikte", "Breedte", "Lengte", "Gewicht", "Aantal"]].apply(pd.to_numeric)
@@ -115,7 +135,7 @@ def combine_dfs(df_list: list) -> pd.DataFrame:
     ].apply(pd.to_numeric)
     df = df.round({"Dikte": 1, "Lengte": 1, "Breedte": 1})
     df = df[~df['Station'].isin(['WS99', 'WS199'])]
-    df = df.drop(["Shape"], axis=1)
+    df = df.drop(["Shape", "GlobalId", "IfcType", "ShapeIsNull", "RepIsNull"], axis=1, errors="ignore")
     return df
 
 def delete_productcode(column: str) -> bool:
@@ -288,7 +308,7 @@ def html_to_pdf(path: str, werknr: str) -> None:
     current_date = datetime.datetime.now()
     date = current_date.strftime("%d-%m-%Y")
     WKHTML_PATH = 'I:/GHO/00 Algemeen/ICT/Applicaties/IFC Tools/Installatiebestanden/wkhtmltopdf/bin/wkhtmltopdf.exe'
-    # WKHTML_PATH = 'C:/Users/nomeon/Desktop/Projects/wkhtmltopdf/bin/wkhtmltopdf.exe'
+    # WKHTML_PATH = 'C:/Users/Stijn/Desktop/wkhtml/wkhtmltopdf/bin/wkhtmltopdf.exe'
     options = {
         'page-size' : 'A4',
         'dpi' : 400,
